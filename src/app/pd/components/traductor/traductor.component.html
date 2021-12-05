@@ -1,0 +1,18 @@
+<div class="row">
+    <div class="col-12">
+        <button (click)="traducir()" class="btn btn-primary">
+            Traducir
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <textarea [(ngModel)]="json" class="w-100" rows="20"> 
+         </textarea>
+    </div>
+    <div class="col-6">
+        <div>
+            {{ resultado | json }}
+        </div>
+    </div>
+</div>

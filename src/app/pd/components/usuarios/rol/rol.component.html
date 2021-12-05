@@ -1,0 +1,14 @@
+<app-base-grid (OnNew)="nuevoRegistro($event)" [bodyTemplate]="bodyTemplate" [titulo]="'submenu.usuarios.rol'  | translate " [config]="gridConfig">
+
+</app-base-grid>
+
+<ng-template #bodyTemplate let-dato>
+
+    <td>
+        {{ dato.NOMBRE_ROL }}
+    </td>
+
+    <td>
+        {{ dato.ESTADO | estadoPipe }}
+    </td>
+</ng-template>

@@ -1,0 +1,76 @@
+<ng-template #formularioDatos>
+    <form id="formulario" role="form" #form (ngSubmit)="enviarFormulario()" [formGroup]="formulario">
+        <div class="p-fluid">
+            <input #controlKey type="hidden" [value]="primarykey.value" [name]="primarykey.name" />
+            <div class="p-field" *ngFor="let control of controles">
+                <app-control-form [datoSeleccionado]="datoSeleccionado" [control]="control"></app-control-form>
+            </div>
+        </div>
+    </form>
+</ng-template>
+<ng-template #formularioFooter>
+    <button form="formulario" type="submit" [disabled]="!enviarHabilitado" class="btn btn-primary">
+        <span *ngIf="!enviarHabilitado"  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span *ngIf="enviarHabilitado">  {{ ("botones." +  (modo == "nuevo" ? "guardar" : "actualizar")) | translate }} </span>
+      </button>
+    <button type="button" (click)="formularioVisible = false" class="btn btn-warning">
+            {{ "botones.cancelar" | translate }}
+      </button>
+</ng-template>
+<ng-container *ngIf="!multi">
+    <p-dialog *ngIf="dialog" [title]="encabezado" [(visible)]="_formularioVisible" [style]="{width: '50vw'}">
+        <ng-container *ngTemplateOutlet="formularioDatos"></ng-container>
+        <ng-template pTemplate="footer">
+            <ng-container *ngTemplateOutlet="formularioFooter">
+
+            </ng-container>
+
+        </ng-template>
+    </p-dialog>
+    <div class="container" *ngIf="!dialog">
+
+    </div>
+</ng-container>
+<ng-container *ngIf="multi">
+    <mat-stepper style="background-color: transparent;" #stepper>
+        <mat-step *ngFor="let form of forms; let i=index" [stepControl]="formGroups[ '_formulario' + i ]" [label]="form.title">
+            <form id="formulario" role="form" (ngSubmit)="enviarFormulario()" [formGroup]="formGroups[ '_formulario' + i ]">
+                <div class="p-fluid">
+                    <!--<input #controlKey type="hidden" [value]="primarykey.value" [name]="primarykey.name" />-->
+                    <div class="p-field" *ngFor="let control of form.controls">
+                        <app-control-form [datoSeleccionado]="datoSeleccionado" [control]="control"></app-control-form>
+                    </div>
+                    <div class="p-field">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" *ngIf="i>0" class="btn btn-primary" matStepperPrevious> {{ "botones.anterior"  | translate }}</button>
+                                <button type="button" class="btn btn-primary" *ngIf="i != (forms.length - 1)" class="btn btn-primary" matStepperNext>{{ "botones.siguiente" | translate  }}</button>
+                            </div>
+                            <div class="col-6" *ngIf="i == (forms.length - 1)">
+                                <button type="submit" [disabled]="!enviarHabilitado" class="btn btn-primary">
+                                    <span *ngIf="!enviarHabilitado"  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span *ngIf="enviarHabilitado">  {{ ("botones." +  (modo == "nuevo" ? "guardar" : "actualizar")) | translate }} </span>
+                                  </button>
+                                <button type="button" (click)="formularioVisible = false" class="btn btn-warning">
+                                        {{ "botones.cancelar" | translate }}
+                                  </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--<div class="p-fluid">
+                    <button form="formulario" type="submit" [disabled]="!enviarHabilitado" class="btn btn-primary">
+                        <span *ngIf="!enviarHabilitado"  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span *ngIf="enviarHabilitado">  {{ ("botones." +  (modo == "nuevo" ? "guardar" : "actualizar")) | translate }} </span>
+                      </button>
+                    <button type="button" (click)="formularioVisible = false" class="btn btn-warning">
+                            {{ "botones.cancelar" | translate }}
+                      </button>
+                </div>-->
+            </form>
+        </mat-step>
+    </mat-stepper>
+
+</ng-container>

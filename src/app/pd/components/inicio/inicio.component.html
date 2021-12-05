@@ -1,0 +1,85 @@
+<div class="pt-4">
+    <div class="row">
+        <div class="col-8">
+            <!--<img src="./assets/images/logos.png" class="img-fluid w-100" alt="">-->
+            <p-carousel [value]="[ '07.png', '08.png', '09.png' ]" [numVisible]="1" [numScroll]="1" [showNavigators]="false" [showIndicators]="false" [autoplayInterval]="2000" [circular]="false">
+                <ng-template let-item pTemplate="item">
+                    <div class="w-100 h-100">
+                        <div style="width: 85%;  background: rgb(18,83,157);
+                        background: linear-gradient(90deg, rgba(18,83,157,1) 0%, rgba(18,83,157,1) 88%, rgba(255,255,255,1) 100%); ">
+                            <img src="./assets/images/elementos{{item}}" class="opacity-30 h-auto w-100" />
+                        </div>
+
+                    </div>
+
+                    <!--<div class="position-relative w-100" style="background-color: #12539d; width: fit-content;">
+                        <div class="w-100 h-100" style="background-image: url('');
+                        background-size: cover;background-repeat: no-repeat;opacity: 0.35;">
+                        </div>
+                    </div>-->
+                </ng-template>
+            </p-carousel>
+        </div>
+        <!--<div class="col-6">
+            <div class="row">
+                <div class="col-12 text-md-center">
+                    <h1> {{ "titulo" | translate | uppercase }} </h1>
+                </div>
+
+            </div>
+        </div>-->
+        <div class="col-4">
+            <div class="row ">
+                <div class="col-auto">
+                    <div class="form-group">
+                        <select (change)="onChangeIdioma(idioma.value)" #idioma class="form-control" style="appearance: auto !important;">
+                                <option value="es">Español</option>
+                                <option value="en">English</option>
+                                <option value="de">Deutsch</option>
+                                <option value="fr">Français</option>
+                              </select>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" (click)="cerrarSesion()" role="button" id="idiomas" aria-expanded="false"> {{ "botones.cerrar_sesion" | translate }}</button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div>
+<div class="w-100">
+    <div class="p-2" style="box-shadow: 0 0 3px rgb(48, 48, 48);">
+        <h2 class="m-0">{{ "administrador" | translate}}</h2>
+    </div>
+</div>
+<div>
+    <div class="row">
+        <div class="col-md-3">
+            <app-header>
+            </app-header>
+        </div>
+        <div class="col-md-9">
+            <section>
+                <p-confirmDialog #cd icon="pi pi-exclamation-triangle" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+                    <ng-template pTemplate="header">
+                        {{ "mensajes.cuadroDialogo.confirmar" | translate }}
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <button type="button" pButton icon="pi pi-check" label="{{ 'mensajes.cuadroDialogo.si' | translate }}" (click)="cd.accept()"></button>
+                        <button type="button" pButton icon="pi pi-cancel" label="{{ 'mensajes.cuadroDialogo.no' | translate }}" (click)="cd.reject()"></button>
+                    </ng-template>
+                </p-confirmDialog>
+                <router-outlet></router-outlet>
+            </section>
+        </div>
+    </div>
+
+
+</div>
+
+<app-footer></app-footer>

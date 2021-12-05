@@ -1,0 +1,46 @@
+<ng-container [ngSwitch]="control.controlType">
+    <ng-container *ngSwitchCase="'textbox'">
+        <ng-container *ngIf="control.isTextArea">
+            <textarea pInputTextarea (change)="control.onchange($event.target)" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" type="text">
+            </textarea>
+        </ng-container>
+        <ng-container *ngIf="!control.isTextArea">
+            <input pInputText (change)="control.onchange($event.target)" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [type]="control.controlType" [id]="control.key" type="text" name="">
+        </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="'number'">
+        <p-inputNumber inputStyleClass="w-100" [(ngModel)]="datoSeleccionado[control.objectKey]" [minFractionDigits]="control?.minFractionDigits" inputId="locale-user" [formControlName]="control.key" [id]="control.key" [minFractionDigits]="2">
+        </p-inputNumber>
+    </ng-container>
+    <ng-container *ngSwitchCase="'password'">
+        <input pPassword (change)="control.onchange($event.target)" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" type="password">
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'checkbox'">
+        <mat-slide-toggle [ngClass]="['p-ml-2']" (change)="toggleChange($event)" [checked]="datoSeleccionado[control.objectKey] == control.trueValue">
+            <span *ngIf="datoSeleccionado[control.objectKey] == control.trueValue"> {{ "activo" | translate }}  </span>
+            <span *ngIf="datoSeleccionado[control.objectKey] == control.falseValue"> {{ "inactivo" | translate }}  </span>
+        </mat-slide-toggle>
+        <input type="hidden" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key">
+        <!-- <p-checkbox [ngClass]="[ 'p-ml-2' ]" [trueValue]="control.trueValue" [binary]="true" [falseValue]="control.falseValue" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key"></p-checkbox>-->
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'dropdown'">
+        <p-dropdown [options]="dropDownList[control.key]" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" [optionValue]="control.options.optionValue" [optionLabel]="control.options.optionLabel"></p-dropdown>
+    </ng-container>
+    <ng-container *ngSwitchCase="'file'">
+        <!--<img *ngIf="datoSeleccionado[control.objectKey] != null" class="img-thumbnail" [src]="datoSeleccionado[control.objectKey]" />-->
+        <input type="hidden" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" />
+        <input [accept]="control.accept" type="file" (change)="onFileChange($event, control.key + '_file',control.key + '_img' )" [id]="control.key + '_key'" />
+    </ng-container>
+    <ng-container *ngSwitchCase="'editor'">
+        <!--<p-editor [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" [style]="control.style"></p-editor>--->
+        <ckeditor [editor]="Editor" [config]="{ language: 'es' }" [(ngModel)]="datoSeleccionado[control.objectKey] == undefined ? '' : datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key"></ckeditor>
+
+    </ng-container>
+    <ng-container *ngSwitchCase="'detail'">
+        <app-base-grid [isDetail]="true" [keyValue]="{ key: control.llavesForaneas.key, column: control.llavesForaneas.column, value: datoSeleccionado[control.llavesForaneas.key]   }" [titulo]="''" [config]="control.config"></app-base-grid>
+        <!--<app-grid-detail [formControlName]="control.key" [(ngModel)]="datoSeleccionado[control.key]" [config]="control.config"></app-grid-detail>-->
+    </ng-container>
+
+</ng-container>

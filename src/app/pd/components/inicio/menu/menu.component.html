@@ -1,0 +1,29 @@
+<p-tabView>
+    <p-tabPanel header="Menu principal">
+        <p-tree (onNodeDrop)="soltarNodo($event)" [droppableNodes]="true" [value]="menuPrincipal" selectionMode="single" (onNodeSelect)="seleccionarNodo($event)">
+        </p-tree>
+    </p-tabPanel>
+    <p-tabPanel header="Roles x menu">
+        <p-panel header="" [toggleable]="true">
+            <ng-template pTemplate="header">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <label> {{  "usuarios.usuario.roles" | translate }}</label>
+                        <p-dropdown [(ngModel)]="rolSeleccionado" #roles [options]="rolesLista" (onChange)="cambioRol(roles.value)" optionValue="id" optionLabel="descripcion"></p-dropdown>
+
+                    </div>
+                    <div class="p-field">
+                        <p-button type="button" (onClick)="guardarCambios()" [label]='"botones.guardar" | translate '>
+                        </p-button>
+                    </div>
+                </div>
+            </ng-template>
+            <p-tree (onNodeUnselect)="quitarNodoRoles( $event) " (onNodeSelect)="seleccionarNodoRoles( $event )" [(selection)]="menuSeleccionado" [value]="menuPrincipal" selectionMode="checkbox" (onNodeSelect)="seleccionarNodo($event)">
+            </p-tree>
+
+        </p-panel>
+
+    </p-tabPanel>
+</p-tabView>
+
+<app-form-dialog [dato]="datoSeleccionado" [formularioVisible]="mostrarFormulario" [dialog]="true" [title]="'' | uppercase" [config]="configFormularioMenu"></app-form-dialog>

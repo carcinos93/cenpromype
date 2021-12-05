@@ -1,0 +1,125 @@
+<p-table #dt [loading]="cargando" [value]="datos" [totalRecords]="totalRecord" [lazy]="lazyLoad" responsiveLayout="scroll" (onLazyLoad)="cargaTabla($event)" [paginator]="true" [rows]="10" [showCurrentPageReport]="false" [rowsPerPageOptions]="[10, 30, 50]"
+    (onPage)="OnPage($event)">
+    <ng-template pTemplate="caption">
+        <div class="row">
+            <!--<div class="col-12 text-md-center">
+                <h2>
+                    {{ titulo }}
+                </h2>
+            </div>-->
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <button type="button" *ngIf="botonEstado('nuevo')" (click)="nuevo()" class="p-button-raised p-button">
+                {{ "botones.nuevo" | translate }}
+            </button>
+                <button type="button" *ngIf="botonEstado('recargar')" (click)="recargarDatos()" class="p-ml-2 p-button-secondary p-button">
+                {{ "botones.recargar" | translate }}
+                &nbsp;<i class="pi pi-refresh"></i>
+              </button>
+                <div class="p-d-flex p-ai-center p-jc-between" *ngFor="let comando of commandos; let i=index">
+                    <p-button type="button" (onClick)="comando.event($event, datoSeleccionado)" [label]="comando.name">
+                    </p-button>
+                </div>
+            </div>
+            <!--<div class="col-6">
+                <div class="text-end">
+                    <span class="p-input-icon-left">
+                            <i class="pi pi-search" (click)="filtrar(inputTextGeneral.value, 'GENERAL', 'lk')"></i>
+                            <input (keydown.enter)="filtrar(inputTextGeneral.value, 'GENERAL', 'lk')" type="text" #inputTextGeneral pInputText>
+                        </span>
+                </div>
+            </div>-->
+        </div>
+
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngFor="let t of columnas; let i=index">
+                {{ t.nombre | encabezadoPipe | translate }}
+            </th>
+            <th></th>
+        </tr>
+        <tr>
+            <th *ngFor="let t of columnas; let i=index">
+                <ng-container *ngIf="t.filter != null">
+                    <ng-container *ngIf="t.filter.type == 'dropdown'">
+                        <p-dropdown [options]="dropDownList[t.columna]" [(ngModel)]="filtrosAplicados[t.columna]" (onChange)="filtrar($event.value, t.filter.field, 'eq')" optionValue="id" optionLabel="descripcion"></p-dropdown>
+                        <!--<p-columnFilter [field]="t.filter.field" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                            <ng-template pTemplate="filter" let-value>
+
+                            </ng-template>
+                        </p-columnFilter>-->
+                    </ng-container>
+                    <ng-container *ngIf="t.filter.type == 'textbox'">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search" (click)="filtrar(inputTextFilter.value, t.filter.field, 'eq')"></i>
+                            <input type="text" #inputTextFilter pInputText>
+                        </span>
+                        <!--<p-columnFilter [field]="t.filter.field" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                            <ng-template pTemplate="filter" let-value>
+
+                            </ng-template>
+                        </p-columnFilter>-->
+                    </ng-container>
+                </ng-container>
+            </th>
+            <th></th>
+        </tr>
+        <tr *ngIf="datos.length == 0">
+            <td class="text-center" [attr.colspan]="columnas.length">
+                NO HAY REGISTROS <span *ngIf="hayFiltrosAplicados"> PARA LOS FILTROS APLICADOS </span>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dato>
+        <tr>
+            <td *ngFor="let d of config.dataTable.columns; let i=index">
+                <ng-container *ngIf="d.pipes == null">
+                    {{ dato[d.columna] }}
+                </ng-container>
+                <ng-container *ngIf="d.pipes != null">
+                    <div [innerHTML]="dato[d.columna + '_formated'] | sanitizerHTML"></div>
+                </ng-container>
+            </td>
+            <td> <button *ngIf="botonEstado('editar')" type="button" (click)="editar(dato)" class="p-button-raised p-button p-mr-2">
+                {{ "botones.editar" | translate }}
+            </button>
+                <button *ngIf="botonEstado('borrar')" type="button" (click)="borrar(dato)" class="p-button-danger p-button">
+                {{ "botones.borrar" | translate }}
+              </button>
+            </td>
+        </tr>
+
+    </ng-template>
+</p-table>
+
+<p-dialog (visibleChange)="cambioVisible($event)" [(visible)]="mostrarFormulario" [style]="{width: '50vw'}">
+    <form id="formulario" role="form" #form [formGroup]="formulario">
+        <div class="p-fluid">
+            <input #controlKey type="hidden" [value]="primarykey.value" [name]="primarykey.name" />
+            <div class="p-field" *ngFor="let control of controles">
+                <label class="form-label"> {{  control.label | encabezadoPipe | translate }} </label>
+                <app-control-form [datoSeleccionado]="datoSeleccionado" [control]="control"></app-control-form>
+            </div>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <button form="formulario" type="button" (click)="enviarFormulario()" [disabled]="!enviarHabilitado" class="btn btn-primary">
+            <span *ngIf="!enviarHabilitado"  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span *ngIf="enviarHabilitado">  {{ ("botones." +  (modo == "nuevo" ? "guardar" : "actualizar")) | translate }} </span>
+          </button>
+        <button type="button" (click)="mostrarFormulario = false" class="btn btn-warning">
+                {{ "botones.cancelar" | translate }}
+          </button>
+    </ng-template>
+</p-dialog>
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+    <ng-template pTemplate="header">
+        {{ "mensajes.cuadroDialogo.confirmar" | translate }}
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-check" label="{{ 'mensajes.cuadroDialogo.si' | translate }}" (click)="cd.accept()"></button>
+        <button type="button" pButton icon="pi pi-cancel" label="{{ 'mensajes.cuadroDialogo.no' | translate }}" (click)="cd.reject()"></button>
+    </ng-template>
+</p-confirmDialog>
