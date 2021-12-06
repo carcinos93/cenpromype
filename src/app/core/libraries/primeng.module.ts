@@ -22,12 +22,14 @@ import {TreeModule} from 'primeng/tree';
 import {TabViewModule} from 'primeng/tabview';
 import {ToggleButtonModule} from 'primeng/togglebutton';
 import {PanelModule} from 'primeng/panel';
+import {MessageModule} from 'primeng/message';
 //import {EditorModule} from 'primeng/editor';
 const MODULOS = [ DataViewModule, TableModule, DynamicDialogModule, InputTextModule, DropdownModule,CalendarModule, DialogModule,
   InputNumberModule, InputTextareaModule, PasswordModule, CarouselModule, CheckboxModule, ImageModule,
   DragDropModule,
   RippleModule,
   TreeModule,
+  MessageModule,
   PanelModule,
   ToggleButtonModule,
   ConfirmDialogModule, ProgressSpinnerModule,

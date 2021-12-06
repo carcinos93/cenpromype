@@ -371,10 +371,26 @@ limpiarFormularios() {
       formulario.reset();
   }
 }
+
+validarFormularios() {
+    let valido = true;
+  for (let f in this.formGroups) {
+    let formulario: FormGroup = this.formGroups[f];
+    if (formulario.invalid) {
+        formulario.markAllAsTouched();
+        valido = false;
+    }
+}
+  return valido;
+}
+
   enviarFormulario() {
     //console.log(this.formulario.value);
     //return;
-    this.enviarHabilitado = false;
+    if (!this.validarFormularios()) {
+      return;
+  }
+  
     const __id = this.datoSeleccionado['__id'];
       let ruta = this.modo == 'nuevo' ? this._config.insertRoute :  this._config.updateRoute;
      let sus;
@@ -390,6 +406,10 @@ limpiarFormularios() {
        formData.append( '__id', __id);
      }
 
+     
+    
+
+    this.enviarHabilitado = false;
 
      /**TODO */
      for ( let i in datoFormulario ) {

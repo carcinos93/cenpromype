@@ -42,5 +42,12 @@
         <app-base-grid [isDetail]="true" [keyValue]="{ key: control.llavesForaneas.key, column: control.llavesForaneas.column, value: datoSeleccionado[control.llavesForaneas.key]   }" [titulo]="''" [config]="control.config"></app-base-grid>
         <!--<app-grid-detail [formControlName]="control.key" [(ngModel)]="datoSeleccionado[control.key]" [config]="control.config"></app-grid-detail>-->
     </ng-container>
+    <div *ngIf="controlVerificacion(control.key)">
+        <small *ngFor="let error of erroresValidacion" class="p-error p-d-block"> 
+            <span *ngIf="controlValido(control.key, error.validacion)">
+                {{ controlValidacionMensaje(control.key, error.validacion) }}
+            </span>
 
+        </small>
+    </div>
 </ng-container>

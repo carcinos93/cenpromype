@@ -117,8 +117,8 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
             dataRoute: 'catalogos/departamentos',
             primaryKey: { column: 'CODIGO_DEPARTAMENTO', key:'codigo_departamento' },
             controls: [
-              new TextboxForm ({ objectKey: 'NOMBRE_DEPARTAMENTO' ,key: "nombre",label: "catalogos.departamento.nombre",required: true,order: 1}, { isTextArea: true }),
-              new DropdownForm ({ objectKey: 'CODIGO_PAIS' ,key: "codigo_pais",label: "catalogos.departamento.pais",required: true,order: 1}, { dataSource: 'listas/paises' })
+              new TextboxForm ({ objectKey: 'NOMBRE_DEPARTAMENTO' ,key: "nombre",label: "catalogos.departamento.nombre",required: true,order: 1, validators: [ { name: 'required' } ]}, { isTextArea: true }),
+              new DropdownForm ({ objectKey: 'CODIGO_PAIS' ,key: "codigo_pais",label: "catalogos.departamento.pais",required: true,order: 1, validators: [ { name: 'required' } ]}, { dataSource: 'listas/paises' })
             ]
           }
         },

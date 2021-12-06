@@ -24,9 +24,10 @@ export class ControlFormComponent implements OnInit {
   //@Input() control: any = {};
   // @Input() set datoSeleccionado(o: any) { }
   control: any = {};
+  mensajeValidacion : { [s: string] : string } = { required : "El campo es requerido", maxLength : "Maximo de caracteres permitido son {0}" }
   datoSeleccionado: any = {};
  
-    
+  erroresValidacion: any[] = []; 
 
   
   @Input() group: string = '';
@@ -75,12 +76,22 @@ export class ControlFormComponent implements OnInit {
         for (let v in validators) {
             let validator = validators[v] as any;
             let nombre: string = validator.name;
+            this.erroresValidacion.push( { validacion: nombre } );
             if ((Validators as any)[nombre] != undefined ) {
-              if ( validator.params.length == 0  ) {
+              let parametros: [] = validator.params ?? [];
+              if ( parametros.length == 0  ) {
                 validatorArr.push( (Validators as any)[nombre]);
               } else {
                 validatorArr.push( (Validators as any)[nombre](...validator.params) );
               }
+
+              parametros.forEach((v, i) => {
+                let msj = this.mensajeValidacion[ nombre ] || "";
+                if (msj != "") {
+                  this.mensajeValidacion[ nombre ] = msj.replace(`{${ i }}`, v);
+                }
+              });
+
             }
         }
         
@@ -132,6 +143,32 @@ export class ControlFormComponent implements OnInit {
 
   toggleChange(event: any) {
       this.datoSeleccionado[this.control.objectKey] = event.checked ? this.control.trueValue : this.control.falseValue;
+  }
+
+  controlVerificacion(nombre: string): boolean {
+    return this.form.form.controls[nombre].invalid &&  (this.form.form.controls[nombre].dirty
+      ||  this.form.form.controls[nombre].touched);
+  }
+
+  controlValido(nombre: string, validacion: string) {
+
+    /*if (this.form.form.controls[nombre].errors?.[validacion]) {
+        return false;
+    } else {
+      return true;
+    }*/
+      return this.form.form.controls[nombre].errors?.[validacion] || true;
+  }
+
+  controlValidacionMensaje(nombre: string, validacion: string) {
+    //return this.form.form.controls[nombre].errors?.[validacion];
+    if  (this.controlValido( nombre, validacion )) {
+      return this.mensajeValidacion[ validacion ] || "";
+    } else {
+      return "";
+
+    }
+
   }
 
 }
