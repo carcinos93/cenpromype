@@ -23,6 +23,10 @@
             "no": "No"
         }
     },
+    "validaciones": {
+        "required": "El campo es requerido",
+        "maxLength": "Maximo de caracteres permitido son {0}"
+    },
     "administrador": "ADMINISTRADOR",
     "titulo": "portal administrativo de plataforma bi",
     "menu": {

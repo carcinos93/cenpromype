@@ -13,7 +13,7 @@
         </p-inputNumber>
     </ng-container>
     <ng-container *ngSwitchCase="'password'">
-        <input pPassword (change)="control.onchange($event.target)" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" type="password">
+        <input pPassword [showPassword]="true" (change)="control.onchange($event.target)" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" type="password">
     </ng-container>
 
     <ng-container *ngSwitchCase="'checkbox'">

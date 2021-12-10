@@ -4,6 +4,7 @@ import { DropdownForm } from 'src/app/pd/models/form.model';
 import { CRUDServiceService } from '../../services/crudservice.service';
 import * as ClassicEditorBuild from '@ckeditor/ckeditor5-build-classic';
 import { inputBase } from '../../../pd/models/form.model';
+import { TranslateService } from '@ngx-translate/core';
 declare var $: any;
 declare module '@ckeditor/ckeditor5-build-classic' { // or other CKEditor 5 build.
   const ClassicEditorBuild: any;
@@ -46,8 +47,13 @@ export class ControlFormComponent implements OnInit {
 
   dropDownList = {} as any;
   form: FormGroupDirective;
-  constructor(private crudService: CRUDServiceService, parent: FormGroupDirective) {
+  constructor(private crudService: CRUDServiceService, parent: FormGroupDirective, private translate: TranslateService) {
     this.form = parent;
+    (async () => {
+        let i = await this.translate.get('validaciones').toPromise();
+        this.mensajeValidacion = i;
+    })();
+
    }
   ngOnInit(): void {
     /*** control tipo detalle no se incluye en las validaciones  */

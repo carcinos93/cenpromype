@@ -10,6 +10,10 @@
          "guardar": "save",
          "cerrar_sesion": "logout"
      },
+     "validaciones": {
+         "required": "Field is required",
+         "maxLength": "Maximum characters allowed are {0}"
+     },
      "administrador": "administrator",
      "titulo": "Bi platform administrative portal",
      "menu": { "usuarios": "users", "catalogos": "catalogues", "subida_informes": "increase in reports", "subida_datos": "data upload", "dashboard": "board" },
