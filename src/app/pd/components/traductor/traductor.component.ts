@@ -19,20 +19,29 @@ export class TraductorComponent implements OnInit {
   traducir() {
     let objeto = JSON.parse(this.json );
     this.resultado = objeto;
+    
     this.recorrerObjeto( objeto, 0 );
+   
+  
   // this.resultado = objeto;
   }
 
-  
+sleep(time: number) {
+    return new Promise( (r) => setTimeout(r, time));
+}
 recorrerObjeto(objeto: any, nivel: number) {
     for (const key in objeto) {
       if ( typeof objeto[key] == "string" ) {
           let valor =  (objeto[key] as string).toLocaleLowerCase();
-          this.traductor.traducir([ valor ], "en").subscribe((data: string[]) => {
-            if (data.length>0) {
-              objeto[key] = data[0];
-            }
-          });
+           if (valor != "") {
+              this.traductor.traducir([ valor ], "en").subscribe((data: string[]) => {
+                if (data.length>0) {
+                  objeto[key] = data[0];
+                }
+              }, (err) => console.log(err));
+           }
+    
+         /*;*/
       } else {
         objeto[key] = this.recorrerObjeto( objeto[key], nivel + 1 );
       }

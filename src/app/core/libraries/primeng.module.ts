@@ -16,6 +16,7 @@ import {ImageModule} from 'primeng/image';
 import {DragDropModule} from 'primeng/dragdrop';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ProgressBarModule} from 'primeng/progressbar';
 import {ToolbarModule} from "primeng/toolbar";
 import {RippleModule} from "primeng/ripple";
 import {TreeModule} from 'primeng/tree';
@@ -23,17 +24,24 @@ import {TabViewModule} from 'primeng/tabview';
 import {ToggleButtonModule} from 'primeng/togglebutton';
 import {PanelModule} from 'primeng/panel';
 import {MessageModule} from 'primeng/message';
+import {SplitButtonModule} from 'primeng/splitbutton';
+import {TooltipModule} from 'primeng/tooltip';
+import {SkeletonModule} from 'primeng/skeleton';
 //import {EditorModule} from 'primeng/editor';
 const MODULOS = [ DataViewModule, TableModule, DynamicDialogModule, InputTextModule, DropdownModule,CalendarModule, DialogModule,
   InputNumberModule, InputTextareaModule, PasswordModule, CarouselModule, CheckboxModule, ImageModule,
+  ProgressBarModule,
   DragDropModule,
   RippleModule,
   TreeModule,
   MessageModule,
   PanelModule,
   ToggleButtonModule,
+  TooltipModule,
   ConfirmDialogModule, ProgressSpinnerModule,
+  SplitButtonModule,
   TabViewModule,
+  SkeletonModule,
   ToolbarModule];
 
 

@@ -1,4 +1,5 @@
 
+
 export class inputBase<T> {
   value: T|undefined;
   key: string;
@@ -65,9 +66,11 @@ export class PasswordForm extends inputBase<string> {
 export class EditorForm extends inputBase<string> {
   controlType = 'editor';
   style: any = {};
-  constructor(options: any, o: { style?: any  } = {}) {
+  command: command;
+  constructor(options: any, o: { style?: any, command?: command  } = {}) {
     super(options);
     this.style = o.style || {};
+    this.command = o.command || { name: "default",  event: () => {} };
   }
 }
 export class CheckBoxForm extends  inputBase<any> {
@@ -133,6 +136,8 @@ export class DetailForm  {
 
 export interface configFormBuild {
   controls: any[];
+  selectionMode: "single" | "multi",
+  allowSelection: boolean,
   commands: command[];
   filters: any[];
   multi: boolean;
@@ -140,6 +145,7 @@ export interface configFormBuild {
   updateRoute: string;
   insertRoute: string;
   dataRoute: any;
+  recuperarRoute: string,
   dataTable: {
     columns: any[];
   },

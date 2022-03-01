@@ -12,7 +12,6 @@ export class ImagenPipe implements PipeTransform {
         prop = `${ prop } ${ i } = '${ propiedades[i] }'`;
     }
     let html = `<img ${prop} />`.replace( '[value]', value);
-    console.log(html);
     return html;
     //return this.dom.bypassSecurityTrustHtml(  html );
   }

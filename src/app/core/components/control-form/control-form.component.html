@@ -17,7 +17,7 @@
     </ng-container>
 
     <ng-container *ngSwitchCase="'checkbox'">
-        <mat-slide-toggle [ngClass]="['p-ml-2']" (change)="toggleChange($event)" [checked]="datoSeleccionado[control.objectKey] == control.trueValue">
+        <mat-slide-toggle [ngClass]="['p-ml-2']" (change)="toggleChange($event, control.key )" [checked]="datoSeleccionado[control.objectKey] == control.trueValue">
             <span *ngIf="datoSeleccionado[control.objectKey] == control.trueValue"> {{ "activo" | translate }}  </span>
             <span *ngIf="datoSeleccionado[control.objectKey] == control.falseValue"> {{ "inactivo" | translate }}  </span>
         </mat-slide-toggle>
@@ -31,11 +31,13 @@
     <ng-container *ngSwitchCase="'file'">
         <!--<img *ngIf="datoSeleccionado[control.objectKey] != null" class="img-thumbnail" [src]="datoSeleccionado[control.objectKey]" />-->
         <input type="hidden" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" />
-        <input [accept]="control.accept" type="file" (change)="onFileChange($event, control.key + '_file',control.key + '_img' )" [id]="control.key + '_key'" />
+        <input #inputFile [accept]="control.accept" type="file" (change)="onFileChange($event, control.key + '_file',control.key + '_img' )" [id]="control.key + '_key'" />
     </ng-container>
     <ng-container *ngSwitchCase="'editor'">
+
         <!--<p-editor [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" [style]="control.style"></p-editor>--->
-        <ckeditor [editor]="Editor" [config]="{ language: 'es' }" [(ngModel)]="datoSeleccionado[control.objectKey] == undefined ? '' : datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key"></ckeditor>
+        <i class="pi pi-eye fa-2x cursor-pointer p-col-12" style="font-size: 2rem;" [ngClass]="{ 'p-hidden' : control.command.name == 'default' }" (click)="control.command.event(datoSeleccionado)"></i>
+        <ckeditor [editor]="Editor" [config]="{ language: 'es' }" [(ngModel)]="datoSeleccionado[control.objectKey] == undefined ? '' : datoSeleccionado[control.objectKey] " [formControlName]="control.key" [id]="control.key"></ckeditor>
 
     </ng-container>
     <ng-container *ngSwitchCase="'detail'">

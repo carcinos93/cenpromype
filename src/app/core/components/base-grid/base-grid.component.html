@@ -1,15 +1,15 @@
 <div class="card">
     <p-toolbar styleClass="p-mb-4">
         <ng-template pTemplate="left">
-            <button class="p-button-raised p-button" style="width: auto;" type="button" *ngIf="botonEstado('nuevo')" (click)="nuevo()">
+            <button class="p-button-primary p-button" style="width: auto;" type="button" *ngIf="botonEstado('nuevo')" (click)="nuevo()">
                 {{ "botones.nuevo" | translate}} 
             </button>
 
-            <button class="p-button-secondary p-ml-1 p-button" style="width: auto;" icon="pi pi-refresh" type="button" *ngIf="botonEstado('recargar')" (click)="recargarDatos()">
-                    <i class="pi pi-refresh"></i>
+            <button class="p-button-secondary p-ml-1 p-button" style="width: auto;" type="button" *ngIf="botonEstado('recargar')" (click)="recargarDatos()">
+                    <i class="pi pi-refresh p-m-1"></i>
               </button>
-            <div class="p-d-flex p-ai-center p-jc-between" *ngFor="let comando of commandos; let i=index">
-                <p-button type="button" (onClick)="comando.event($event, datoSeleccionado)" [label]="comando.name">
+            <div class="p-ml-1 -p-d-flex p-ai-center p-jc-between" *ngFor="let comando of commandos; let i=index">
+                <p-button type="button" [disabled]="!selectedRows" (onClick)="comando.event($event, selectedRows)" [label]="comando.name">
                 </p-button>
             </div>
         </ng-template>
@@ -24,9 +24,12 @@
 
 </div>
 <p-table #dt [customSort]="true" sortMode="multiple" [loading]="cargando" [value]="datos" [totalRecords]="totalRecord" [lazy]="true" responsiveLayout="scroll" (onLazyLoad)="cargaTabla($event)" [paginator]="true" [rows]="10" [showCurrentPageReport]="false"
-    [rowsPerPageOptions]="[10, 30, 50]" (onPage)="OnPage($event)">
+    [rowsPerPageOptions]="[10, 30, 50]" (onPage)="OnPage($event)" [(selection)]="selectedRows">
     <ng-template pTemplate="caption">
-        <div class="row" *ngIf="titulo != ''">
+        <div class="row" *ngIf="cargandoFormulario">
+            <p-progressBar mode="indeterminate"></p-progressBar>
+        </div>
+        <div class="row" *ngIf="titulo || '' == ''">
             <div class="col-12 text-md-center">
                 <h2>
                     {{ titulo }}
@@ -36,33 +39,32 @@
     </ng-template>
     <ng-template pTemplate="header">
         <tr>
+            <th *ngIf="allowSelection"></th>
             <th [pSortableColumn]="t.columna" *ngFor="let t of columnas; let i=index">
-                {{ t.nombre | encabezadoPipe | translate }}
-                <p-sortIcon [field]="t.columna"> </p-sortIcon>
+                <div class="p-d-flex p-jc-between p-ai-center">
+                    {{ t.nombre + ".nombre_campo" | encabezadoPipe | translate }}
+                    <p-sortIcon [field]="t.columna"> </p-sortIcon>
+                    <div class="p-d-inline-flex p-ml-auto">
+                        <i class="pi pi-question-circle" *ngIf='(t.nombre + ".descripcion" | encabezadoPipe | translate) != ""' pTooltip='{{ t.nombre + ".descripcion" | encabezadoPipe | translate }}'></i>
+                    </div>
+                </div>
+
+
             </th>
             <th></th>
         </tr>
         <tr>
+            <th *ngIf="allowSelection"></th>
             <th *ngFor="let t of columnas; let i=index">
                 <ng-container *ngIf="t.filter != null">
                     <ng-container *ngIf="t.filter.type == 'dropdown'">
                         <p-dropdown [options]="dropDownList[t.columna]" [(ngModel)]="filtrosAplicados[t.columna]" (onChange)="filtrar($event.value, t.filter.field, 'eq')" optionValue="id" optionLabel="descripcion"></p-dropdown>
-                        <!--<p-columnFilter [field]="t.filter.field" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
-                            <ng-template pTemplate="filter" let-value>
-
-                            </ng-template>
-                        </p-columnFilter>-->
                     </ng-container>
                     <ng-container *ngIf="t.filter.type == 'textbox'">
                         <span class="p-input-icon-left">
                             <i class="pi pi-search" (click)="filtrar(inputTextFilter.value, t.filter.field, 'eq')"></i>
                             <input type="text" #inputTextFilter pInputText>
                         </span>
-                        <!--<p-columnFilter [field]="t.filter.field" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
-                            <ng-template pTemplate="filter" let-value>
-
-                            </ng-template>
-                        </p-columnFilter>-->
                     </ng-container>
                 </ng-container>
             </th>
@@ -76,6 +78,15 @@
     </ng-template>
     <ng-template pTemplate="body" let-dato>
         <tr>
+            <td *ngIf="allowSelection">
+                <ng-container *ngTemplateOutlet="selectionMode == 'single' ? single : multi"></ng-container>
+                <ng-template #single>
+                    <p-tableRadioButton *ngIf="allowSelection" [value]="dato"></p-tableRadioButton>
+                </ng-template>
+                <ng-template #multi>
+                    <p-tableCheckbox *ngIf="allowSelection" [value]="dato"></p-tableCheckbox>
+                </ng-template>
+            </td>
             <ng-container [ngTemplateOutlet]="bodyTemplate" [ngTemplateOutletContext]="{$implicit:dato}">
             </ng-container>
             <ng-container *ngIf="bodyTemplate == null">
@@ -88,15 +99,15 @@
                     </ng-container>
                 </td>
             </ng-container>
-            <td class="p-text-right"> <button *ngIf="botonEstado('editar')" type="button" style="width: auto;" (click)="editar(dato)" class="p-button-raised p-button p-mr-2">
+            <td class="p-text-right">
+                <button [disabled]="cargandoFormulario" *ngIf="botonEstado('editar')" type="button" style="width: auto;" (click)="editar(dato)" class="p-button p-button-primary p-mr-2">
                 {{ "botones.editar" | translate }}
             </button>
-                <button *ngIf="botonEstado('borrar')" style="width: auto;" type="button" (click)="borrar(dato)" class="p-button-danger p-button">
+                <button [disabled]="cargandoFormulario" *ngIf="botonEstado('borrar')" style="width: auto;" type="button" (click)="borrar(dato)" class="p-button p-button-danger">
                 {{ "botones.borrar" | translate }}
               </button>
             </td>
         </tr>
-
     </ng-template>
 </p-table>
 <!--(ngSubmit)="enviarFormulario()"*/-->
@@ -107,7 +118,10 @@
             <form class="formulario_grid" [id]="'formulario' + i " role="form" [formGroup]="formGroups[ '_formulario' + i ]">
                 <div class="p-fluid">
                     <div class="p-field" *ngFor="let control of formulario.controls">
-                        <label class="form-label"> {{  control.label | encabezadoPipe | translate }} </label>
+                        <label class="form-label"> {{  control.label + '.nombre_campo'   | encabezadoPipe | translate }} 
+                            <i class="pi pi-question-circle" *ngIf='(control.label + ".descripcion" | encabezadoPipe | translate) != ""' pTooltip='{{ control.label + ".descripcion" | encabezadoPipe | translate }}'></i>
+                        </label>
+
                         <app-control-form [config]="{ data: datoSeleccionado, modo: modo, control: control  }"></app-control-form>
                     </div>
                     <!--<div class="p-field">
@@ -141,15 +155,22 @@
     </mat-stepper>-->
     <ng-template pTemplate="footer">
 
-        <button form="formulario" type="button" (click)="enviarFormulario()" [disabled]="!enviarHabilitado" class="btn btn-primary">
+        <button type="button" (click)="enviarFormulario(false)" [disabled]="!enviarHabilitado" class="btn btn-primary">
             <span *ngIf="!enviarHabilitado"  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             <span *ngIf="enviarHabilitado">  {{ ("botones." +  (modo == "nuevo" ? "guardar" : "actualizar")) | translate }} </span>
+
           </button>
+        <button type="button" (click)="enviarFormulario()" [disabled]="!enviarHabilitado" class="btn btn-primary">
+            <span *ngIf="!enviarHabilitado"  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span *ngIf="enviarHabilitado">  {{ ("botones." +  (modo == "nuevo" ? "guardar_cerrar" : "actualizar_cerrar")) | translate }} </span>
+        </button>
+
         <button type="button" (click)="mostrarFormulario = false" class="btn btn-warning">
                 {{ "botones.cancelar" | translate }}
         </button>
     </ng-template>
 </p-dialog>
+
 <!--
 <p-dialog (visibleChange)="cambioVisible($event)" [(visible)]="mostrarFormulario" [style]="{width: '50vw'}">
     <form id="formulario" role="form" #form [formGroup]="formulario">

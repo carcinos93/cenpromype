@@ -1,0 +1,6 @@
+{
+    "rutaPortal": "http://72.167.226.188/~oqmdev/portalcenpromype",
+    "baseUrl": "/cenpromype_ws",
+    "baseApi": "/cenpromype_ws/api",
+    "versions": { "i18n": "1.6.6" }
+}

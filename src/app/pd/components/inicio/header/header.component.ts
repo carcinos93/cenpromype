@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import menu_json from '../../../../shared/menu';
@@ -15,6 +15,7 @@ import { CRUDServiceService } from '../../../../core/services/crudservice.servic
 })
 export class HeaderComponent  implements OnInit {
   idiomas: string[] = [];
+  menuCargado = false;
   menu: { MENU: string, SUBMENU:  { nombre: string, url: string }[]  }[]   = [] as any;
   //menu: { MENU: string, SUBMENU:  { nombre: string, url: string }[]  }[]   = [] as any;
   constructor(private translate: TranslateService, private route: Router, private crudService: CRUDServiceService) {
@@ -29,7 +30,13 @@ export class HeaderComponent  implements OnInit {
                   return { nombre: v1['ETIQUETA'], 'url': v1['URL'] };
                 })};
         });    
-    }, (error) =>  console.log(error) );
+    }, (error) =>  console.log(error), () => this.menuCargado = true );
+
+    this.route.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+          console.log(event);
+      }
+    });
    }
   ngOnInit(): void {
     

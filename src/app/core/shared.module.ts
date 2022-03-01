@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule, DecimalPipe, UpperCasePipe, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -17,6 +17,13 @@ import { ImagenPipe } from './shared/pipes/imagen.pipe';
 import { SanitizerHTMLPipe } from './shared/pipes/sanitizer-html.pipe';
 import {ConfirmationService} from "primeng/api";
 import { GridDetailComponent } from './components/grid-detail/grid-detail.component';
+import { AppConfig } from './services/appConfig';
+const appInitializerFn = (appConfig: AppConfig) => {
+  return () => {
+    return appConfig.loadAppConfig();
+  };
+};
+
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -40,7 +47,13 @@ export function createTranslateLoader(http: HttpClient) {
 
 
     }, isolate: false})*/
-  ],  providers: [ EncabezadoPipePipe, EstadoPipePipe, ImagenPipe, UrlPipe, UpperCasePipe, DecimalPipe, DatePipe, ConfirmationService  ]
+  ],  providers: [ EncabezadoPipePipe, EstadoPipePipe, ImagenPipe, UrlPipe, UpperCasePipe, DecimalPipe, DatePipe, ConfirmationService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFn,
+      multi: true,
+      deps: [AppConfig]
+    }  ]
   , exports: [ FormsModule,ReactiveFormsModule,TranslateModule, EncabezadoPipePipe, EstadoPipePipe, ImagenPipe, UrlPipe,
     BaseGridComponent ,FormDialogComponent,GridDetailComponent,ControlFormComponent, PrimeNgModule, MaterialModule  ]
 })
@@ -48,7 +61,7 @@ export class SharedModule {
 
   static forRoot(): ModuleWithProviders {
     return {
-     ngModule: SharedModule,
+      ngModule: SharedModule,
       providers: []
     }
   }

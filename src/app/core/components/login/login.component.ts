@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
       if (!this.formulario.invalid) {
           this.crudService.create(  { usuario: this.usuario, password: this.password }, "login" ).subscribe((data: any) => {
             if (data.success) {
-              this.ls.login({ "token" : data.token });
+              this.ls.login({ "token" : data.token, username: this.usuario });
              } else {
                this.translate.get(data.message).subscribe((data: any) => {
                   alert(data);

@@ -1,19 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { CheckBoxForm, DetailForm, DropdownForm, EditorForm, FileForm, TextboxForm } from "../../../models/form.model";
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { CheckBoxForm, DetailForm, DropdownForm, EditorForm, TextboxForm } from "../../../models/form.model";
+import { CRUDServiceService } from '../../../../core/services/crudservice.service';
 
 @Component({
   selector: 'app-documentos',
   templateUrl: './documentos.component.html',
-  styles: [
+  styles: [ 
+
   ]
 })
-export class DocumentosComponent implements OnInit {
+export class DocumentosComponent implements OnInit, AfterViewInit {
 
   config: any = { controls: [], primaryKey: { column: '', key: '' } };
-  constructor() { }
+  mostrarFormulario: boolean = false;
+  frameCargando: boolean = false;
+  urlFrame: string = "";
+  @ViewChild('iframe') frame : ElementRef | undefined;
+  constructor(private crudService: CRUDServiceService) { 
+  }
+  ngAfterViewInit(): void {
+    (this.frame?.nativeElement as any)['onload'] = this.iframeCarga.bind(this);
+
+  }
 
   ngOnInit(): void {
     this.config = this.encabezado();
+    
   }
   grupoDetalle() {
     return {
@@ -77,11 +89,34 @@ export class DocumentosComponent implements OnInit {
     };
   }
 
+   pdfCommando(event: any, datoSeleccionado: any) {
+      this.crudService.create( { CODIGO_DOCUMENTO: datoSeleccionado.CODIGO_DOCUMENTO }, "generar-pdf" )
+      .subscribe((data) => {
+          
+      }, (err) => console.log(err));
+      
+  }
+  visorComando(data: any) {
+    this.mostrarFormulario = true; 
+    this.frameCargando = true; 
+    let url = this.crudService.getBaseUrl();
+    this.urlFrame = `${url}/vistas/documento/${data.CODIGO_DOCUMENTO}?v=${ new Date().toISOString() }`;
+    
+  }
+
+  iframeCarga() {
+    console.log("cargando");
+     this.frameCargando = false;
+  }
   encabezado() {
     return {
       insertRoute: 'TB/documento',
       updateRoute: 'TB/documento',
       dataRoute: 'TB/documento',
+      recuperarRoute: 'TB/documento',
+      selectedMode: "single",
+      allowSelection: true,
+      commands: [ { name: 'pdf', event: this.pdfCommando.bind(this) } ],
       primaryKey: { column: 'CODIGO_DOCUMENTO', key: 'codigo_documento' },
       botonesEstado: { 'borrar': false },
       multi: true,
@@ -108,7 +143,7 @@ export class DocumentosComponent implements OnInit {
               ]
             }),
 
-          new EditorForm({ objectKey: 'CONTENIDO', key: "contenido", label: "tb.documento.contenido", required: true, order: 1 }, { style: "height: 600px" })
+          new EditorForm({ objectKey: 'CONTENIDO', key: "contenido", label: "tb.documento.contenido", required: true, order: 1 }, { style: "height: 600px", command: { name: "visor", event: this.visorComando.bind(this) } })
         ]
       }, {
         titulo: "Palabras claves", controls: [

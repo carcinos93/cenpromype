@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import 'variables.scss';
+.p-button-primary .p-button,
+button.p-button-primary {
+    background: $color-azul !important;
+}
+
 html,
 body {
     height: 100%;
@@ -7,7 +13,7 @@ body {
 
 body {
     margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: 'Fira Sans';
 }
 
 
@@ -19,15 +25,15 @@ body {
 }
 
 .nav-item .nav-item:hover {
-    background-color: #f18a00 !important;
+    background-color: $color-naranja!important;
 }
 
 .menu .nav-link .fa {
-    color: #f18a00;
+    color: $color-naranja;
 }
 
 .menu {
-    background-color: #12549d;
+    background-color: $color-azul;
 }
 
 .menu a {
@@ -44,6 +50,10 @@ a.disabled {
     /* And disable the pointer events */
     pointer-events: none !important;
     cursor: not-allowed;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }
 
 .menu .nav-link:focus,

@@ -7,19 +7,35 @@ import { LocalStorageService } from '../../../core/services/local-storage.servic
 @Component({
   selector: 'app-inicio',
   templateUrl: './inicio.component.html',
-  styles: [
-  ]
+  styleUrls: [ './styles.scss' ]
 })
 export class InicioComponent implements OnInit {
 
   title = 'cenpromype';
-  constructor( private translateService: TranslateService, private snack: MatSnackBar, private localStorage: LocalStorageService,
+  items: any[] = [];
+  idiomaSeleccionado: string = 'es';
+  constructor( private translateService: TranslateService, private snack: MatSnackBar, public localStorage: LocalStorageService,
     private router: Router) {
-
-  }
-  ngOnInit(): void {
+      let idioma = this.localStorage.getItem("cenpromype_idioma") || "es";
+      this.idiomaSeleccionado = idioma;
+      this.translateService.use(idioma);
       
   }
+  ngOnInit(): void {
+    (async() => {
+      let s = await this.translateService.get("botones.cerrar_sesion").toPromise();
+        this.items = [{ label: s, icon: 'pi pi-power-off', command: () => {
+            this.cerrarSesion();
+    }}];
+    } )();
+
+      /*this.translateService.get("botones.cerrar_sesion").subscribe((data) => {
+          
+      });*/
+      
+    
+  }
+
   onChangeIdioma(idioma: string,) {
       this.localStorage.setItem( "cenpromype_idioma", idioma );
       this.translateService.use(idioma);

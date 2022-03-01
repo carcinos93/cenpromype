@@ -36,7 +36,6 @@ export class UsuarioComponent implements OnInit {
       ]
     };
   }
-
   private formBuilder() {
 
     return  {
@@ -64,7 +63,6 @@ export class UsuarioComponent implements OnInit {
                 new DetailForm({ key: "usuarioRol", "label": "usuarios.usuario.roles", order: 5, config: this.usuarioRolDetalle(), llavesForeas: { key: 'CODIGO_USUARIO', column: 'CODIGO_USUARIO' } })
               ]
             }
-
           ]
           };
      

@@ -32,16 +32,19 @@
             <div class="row ">
                 <div class="col-auto">
                     <div class="form-group">
-                        <select (change)="onChangeIdioma(idioma.value)" #idioma class="form-control" style="appearance: auto !important;">
+                        <p-dropdown [options]="[ { id: 'es', desc: 'Español'  }, { id: 'en', desc: 'English'  } ]" optionValue="id" optionLabel="desc" (onChange)="onChangeIdioma(idioma.value)" [(ngModel)]="idiomaSeleccionado" #idioma>
+
+                        </p-dropdown>
+                        <!--<select (change)="onChangeIdioma(idioma.value)" [(ngModel)]="idiomaSeleccionado" #idioma class="form-control p-dropdown" style="appearance: auto !important;">
                                 <option value="es">Español</option>
                                 <option value="en">English</option>
                                 <option value="de">Deutsch</option>
                                 <option value="fr">Français</option>
-                              </select>
+                              </select>--->
                     </div>
                 </div>
                 <div class="col-auto">
-                    <button class="btn btn-primary" (click)="cerrarSesion()" role="button" id="idiomas" aria-expanded="false"> {{ "botones.cerrar_sesion" | translate }}</button>
+                    <p-splitButton [label]="localStorage.getCurrentUsername()" icon="pi pi-user" [model]="items" styleClass="p-button-primary"></p-splitButton>
 
                 </div>
             </div>
@@ -54,7 +57,7 @@
 </div>
 <div class="w-100">
     <div class="p-2" style="box-shadow: 0 0 3px rgb(48, 48, 48);">
-        <h2 class="m-0">{{ "administrador" | translate}}</h2>
+        <h3 class="m-0">{{ "administrador" | translate}}</h3>
     </div>
 </div>
 <div>
