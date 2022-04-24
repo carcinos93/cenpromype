@@ -26,6 +26,10 @@ export class CRUDServiceService {
   getBaseUrl() {
     return this.baseUrl;
   }
+
+  get getBaseApi() {
+    return this.baseApi;
+  }
   getAll(route: string, l: any): Observable<any> {
     let filterArray= [];
     let sort = l.multiSortMeta ?? [];

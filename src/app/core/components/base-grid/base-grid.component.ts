@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ControlContainer } from '@angular/forms';
 import { LazyLoadEvent } from 'primeng/api';
 import { map } from 'rxjs/operators';
 import { configFormBuild } from 'src/app/pd/models/form.model';
@@ -30,6 +30,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   selectionMode:  "single" | "multi" = "single";
   allowSelection: boolean = false;
   selectedRows: any = null;
+  existUploadControls: boolean = false;
   @Input() set config(o: any) {
     if (o != undefined && o != null) {
       this._config = o;
@@ -42,12 +43,22 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       if (this._config.multi) {
           this.formularios = this._config.controls;
       } else { 
-        this.formularios.push( {  "titulo": "", controls: this._config.controls || [] } );
+        this.formularios.push( {  "titulo": "", controls: this._config.controls || [], mustBeCreated: false } );
       }
+
   
       this.formularios.forEach(( v: any, i: number ) => {
           let m = `_formulario${i}`;
           this.formGroups[m] = new FormGroup({});
+          
+        //revisar si hay control de File o Editor (editor tiene un apartado de carga de archivo)
+          if (v.controls) {
+              if ((  v.controls as inputBase<any>[] ).filter((v1, i1) => {
+                   return "file editor file-uploader".includes(v1.controlType)
+              }).length > 0) {
+                this.existUploadControls = true;
+              }
+          }
       });
   
       this.commandos = this._config.commands || [];
@@ -412,10 +423,17 @@ limpiarFormularios() {
 estadoOriginal() {
   for (let f in this.formGroups) {
     let formulario: FormGroup = this.formGroups[f];
-    if (formulario.invalid) {
-        formulario.markAsPristine();
+    formulario.markAsPristine();
+        for (let key in formulario.controls)
+        {
+            let control = formulario.controls[key];
+            if (key.includes("_file")) {
+               control.setValue(null);
+               control.markAsPristine();
+            }
+        }
 
-    }
+  
 }
 }
 
@@ -477,6 +495,10 @@ validarFormularios() {
           } else {
             if (this.modo == 'nuevo') {
                 this.editar( resp.data );
+            } else if (this.modo = 'editar') {
+                 for (let key in resp.data) {
+                    this.datoSeleccionado[key] = resp.data[key];
+                 }
             }
 
             this.estadoOriginal();

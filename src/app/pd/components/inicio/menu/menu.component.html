@@ -1,6 +1,6 @@
 <p-tabView>
     <p-tabPanel header="Menu principal">
-        <p-tree (onNodeDrop)="soltarNodo($event)" [droppableNodes]="true" [value]="menuPrincipal" selectionMode="single" (onNodeSelect)="seleccionarNodo($event)">
+        <p-tree (onNodeDrop)="soltarNodo($event)" [validateDrop]="true" droppableScope="self" draggableScope="self" [draggableNodes]="true" [droppableNodes]="true" [value]="menuPrincipal">
         </p-tree>
     </p-tabPanel>
     <p-tabPanel header="Roles por menú">

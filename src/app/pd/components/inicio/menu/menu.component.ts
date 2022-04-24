@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { TreeDragDropService, TreeNode, TreeNodeDragEvent } from 'primeng/api';
 import { CheckBoxForm, DropdownForm, TextboxForm } from 'src/app/pd/models/form.model';
 import { CRUDServiceService } from '../../../../core/services/crudservice.service';
-
+import {MessageService} from 'primeng/api';
+import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styles: [
   ],
-  providers: [ TreeDragDropService]
+  providers: [ TreeDragDropService, MessageService]
 })
 export class MenuComponent implements OnInit {
   
@@ -55,7 +56,14 @@ export class MenuComponent implements OnInit {
   }
 
   soltarNodo(event: any) {
-    //console.log(event);
+      let dragNode = event.dragNode;
+      let dropNode = event.dropNode;
+      if (!dragNode.is_group && dropNode.is_group) {
+          event.accept();
+          this.crudService.update( dragNode.id, "TB/menu/menu-padre", { MENU_PADRE: dropNode.id } ).subscribe((data) => {
+              console.log(data);
+          })
+      }
   }
 
 

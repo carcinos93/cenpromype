@@ -9,12 +9,13 @@
         <a class="nav-link collapsed nav-link cursor-pointer" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse1" [href]="'#collapse'  + i.toString() ">
              {{ "menu." + m.MENU | translate }}  <i class="fa fa-caret-down" aria-hidden="true"></i> <i class="fa fa-caret-up" aria-hidden="true"></i> </a>
         <ul class="nav flex-column collapse" [id]="'collapse' + i.toString() ">
-            <li class="nav-item" *ngFor="let s of m.SUBMENU">
-                <!-- submenu -->
-                <a *ngIf="s.url != '#'" class="nav-link cursor-pointer" [class.disabled]="s.url == '#'" (click)="menuClick(s.url)"> {{ "submenu." + m.MENU + "." +  s.nombre | translate }} </a>
+            <li class="nav-item" *ngFor="let s of m.SUBMENU" [class.active]="urlActiva(s.url)" [class.p-d-none]="s.url == '#'">
+
+                <a #enlace class="nav-link cursor-pointer" [class.disabled]="s.url == '#'" (click)="menuClick(s.url);"> {{ "submenu." + m.MENU + "." +  s.nombre | translate }} </a>
             </li>
         </ul>
     </li>
+
     <ng-container *ngIf="!menuCargado">
         <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
         <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
@@ -25,31 +26,3 @@
     </ng-container>
 
 </ul>
-
-
-<!--
-
-<ul class="nav">
-    <li class="nav-item">
-        <a class="nav-link active" href="#"> {{ "MENU.NOSOTROS" | translate | uppercase  }} </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">{{ "MENU.PRODUCTOS" | translate | uppercase  }}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">{{ "MENU.CONTACTANOS" | translate | uppercase  }}</a>
-    </li>
-    <li class="nav-item">
-        <mat-form-field>
-            <mat-label>Idioma</mat-label>
-            <mat-select (selectionChange)="onChangeIdioma(idioma.value)" #idioma>
-                <mat-option *ngFor="let idioma of idiomas" [value]="idioma">
-                    idioma
-                </mat-option>
-
-            </mat-select>
-        </mat-form-field>
-
-    </li>
-</ul>    
--->

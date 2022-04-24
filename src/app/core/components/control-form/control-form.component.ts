@@ -1,12 +1,13 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ControlContainer, FormControl, FormGroupDirective, Validators } from '@angular/forms';
-import { DropdownForm } from 'src/app/pd/models/form.model';
+import { DropdownForm, EditorForm } from 'src/app/pd/models/form.model';
 import { CRUDServiceService } from '../../services/crudservice.service';
 import * as ClassicEditorBuild from '@ckeditor/ckeditor5-build-classic';
 import { inputBase } from '../../../pd/models/form.model';
 import { TranslateService } from '@ngx-translate/core';
 import { CustomValidators } from '../../shared/validators/customValidators';
-
+import * as JSZip from 'jszip';
+import { AppConfig } from '../../services/appConfig';
 
 declare var $: any;
 declare module '@ckeditor/ckeditor5-build-classic' { // or other CKEditor 5 build.
@@ -16,6 +17,7 @@ declare module '@ckeditor/ckeditor5-build-classic' { // or other CKEditor 5 buil
   selector: 'app-control-form',
   templateUrl: './control-form.component.html',
   styles: [
+    '.image-upload  input[type="file"] {  visibility: hidden; width: 0; height:0 }'
   ],
   viewProviders: [
     {
@@ -28,18 +30,26 @@ export class ControlFormComponent implements OnInit {
   //@Input() control: any = {};
   // @Input() set datoSeleccionado(o: any) { }
   @ViewChild('inputFile') inputFile: ElementRef | undefined;
+  @ViewChild('cargaArchivo') cargaArchivo: ElementRef | undefined;
   control: any = {};
+  mensajesControl:  any = {};
+  archivoNombre: string = '';
+  archivoEditor: string = '';
   mensajeValidacion : { [s: string] : string } = { required : "El campo es requerido", maxLength : "Maximo de caracteres permitido son {0}" }
   datoSeleccionado: any = {};
  
   erroresValidacion: any[] = []; 
 
-  
+  archivoStatus: "loading" | "loaded" | "no" = "no" ;
   @Input() group: string = '';
   @Input() set config(o: any) {
     this.datoSeleccionado = o.data;
     this.control = o.control;
-    
+    for (var i in this.mensajesControl) {
+      this.mensajesControl[i] = "";
+    }
+    this.archivoStatus = "no";
+    this.archivoNombre = this.archivoEditor = "";
     if (o.modo != undefined) {
       if (o.modo == "nuevo") {
           this.cargarDatosDefault();
@@ -51,7 +61,8 @@ export class ControlFormComponent implements OnInit {
 
   dropDownList = {} as any;
   form: FormGroupDirective;
-  constructor(private crudService: CRUDServiceService, parent: FormGroupDirective, private translate: TranslateService) {
+  constructor(private crudService: CRUDServiceService, parent: FormGroupDirective, private translate: TranslateService,
+    public appConfig: AppConfig) {
     this.form = parent;
     (async () => {
         let i = await this.translate.get('validaciones').toPromise();
@@ -90,7 +101,7 @@ export class ControlFormComponent implements OnInit {
 
         //this.form.form.addControl(this.control.key ,this.control.required ? new FormControl(this.datoSeleccionado[this.control.objectKey] || '', Validators.required ) : new FormControl(valor || ''));
         this.form.form.addControl(this.control.key ,new FormControl(this.datoSeleccionado[this.control.objectKey] || '', validators  ))
-        if ((this.control.controlType == 'file')  ) {
+        if ((this.control.controlType == 'file' || this.control.controlType == 'editor' )  ) {
           this.form.form.addControl( this.control.key + '_file', new FormControl(null)  );
         }
 
@@ -128,7 +139,6 @@ export class ControlFormComponent implements OnInit {
         }
 
     }
-    console.log(validatorArr);
     return validatorArr;
   }
   
@@ -145,6 +155,12 @@ export class ControlFormComponent implements OnInit {
     if (this.inputFile != undefined) {
       this.inputFile.nativeElement.value = '';
     }
+
+    for (var i in this.mensajesControl) {
+      this.mensajesControl[i] = "";
+    }
+
+    this.archivoNombre = this.archivoEditor = "";
   }
 
   /**
@@ -166,6 +182,7 @@ export class ControlFormComponent implements OnInit {
       let file = event.target.files[0];
       let v: any = {};
       v[ control ] = file;
+      this.archivoNombre = file.name;
       this.form.form.controls[control].markAsDirty();
       this.form.form.patchValue( v );
      /* let reader = new FileReader();
@@ -175,6 +192,46 @@ export class ControlFormComponent implements OnInit {
     reader.readAsDataURL(file);*/
     }
 
+  }
+
+  archivoCarga(event: any, control: EditorForm) {
+    this.archivoStatus = "loading";
+    if (event.target.files.length > 0) {
+      let file = event.target.files[0] as File;
+      this.archivoEditor = file.name;
+      let totalSize = file.size / 1000000.0; //convertir a megas
+      if (totalSize<=control.maxLoadSizeMb) {
+           let reader = new FileReader();
+           reader.addEventListener("load", () => { // Setting up base64 URL on image
+           this.datoSeleccionado[control.objectKey] = reader.result ?? "";
+           this.form.form.controls[control.key].markAsDirty();
+           this.archivoStatus = "loaded";
+           if (this.cargaArchivo != undefined) { 
+              this.cargaArchivo.nativeElement.value = '';
+     
+           }
+           /*let zip: JSZip = new (JSZip as any)();
+           zip.file(file.name, reader.result ?? "");
+            zip.generateAsync({ type: "blob", compression: "DEFLATE" }).then((content) => {
+            });*/
+
+          }, false);
+          reader.readAsText(file);
+        } else {
+          let v: any = {};
+          v[ control.key + "_file" ] = file;
+          this.datoSeleccionado[control.objectKey] = "";
+          this.form.form.controls[control.key + "_file"].markAsDirty();
+          this.form.form.patchValue( v );
+
+          this.archivoStatus = "loaded";
+          this.mensajesControl[control.key] = "* El tamaño del archivo podría causar problemas de rendimiento en navegador, se procederá solo a cargar el archivo ";
+          if (this.cargaArchivo != undefined) { 
+            this.cargaArchivo.nativeElement.value = '';
+         }
+        }
+      }
+      
   }
 
   /**

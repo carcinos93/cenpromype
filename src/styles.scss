@@ -6,6 +6,10 @@ button.p-button-primary {
     background: $color-azul !important;
 }
 
+.text-primary {
+    color: $color-azul !important;
+}
+
 html,
 body {
     height: 100%;
@@ -20,11 +24,18 @@ body {
 /** MENU **/
 
 .nav-item .nav-item {
-    font-size: 0.75rem;
+    font-size: 1rem;
     margin-left: 25px;
+    margin-bottom: 5px;
+    border-radius: 10px 0 0 10px;
 }
 
 .nav-item .nav-item:hover {
+    background-color: $color-naranja!important;
+    transition: all 0.7s;
+}
+
+.nav-item.active {
     background-color: $color-naranja!important;
 }
 
@@ -66,17 +77,19 @@ a.disabled {
 }
 
 .menu .nav-item:not(.nav-item .nav-item):not(:first-child) {
-    border-bottom: 1px solid rgb(36, 36, 36);
+    border-bottom: 1px outset rgb(204, 204, 204);
     margin-bottom: 0.5rem !important;
     padding-bottom: 1rem !important;
 }
 
 .menu .nav-link:not(.collapsed) .fa-caret-down {
     display: none !important;
+    transition: all 0.6;
 }
 
 .menu .nav-link.collapsed .fa-caret-up {
     display: none !important;
+    transition: all 0.6;
 }
 
 .cdk-overlay-container {
@@ -100,4 +113,8 @@ p-confirmdialog .p-dialog-mask.p-component-overlay {
 
 .bg-white {
     background-color: white;
+}
+
+.formulario-dinamico .p-tabview .p-disabled * {
+    pointer-events: initial !important;
 }

@@ -4,15 +4,19 @@
         "editar": "Editar registro",
         "borrar": "Borrar registro",
         "cancelar": "Cancelar",
-        "actualizar": "Actualizar",
-        "guardar": "Guardar",
         "cerrar_sesion": "Cerrar sesión",
         "siguiente": "Siguiente",
         "anterior": "Anterior",
         "recargar": "Recargar datos",
-        "guardar_cerrar": "Guardar y cerrar",
         "registrarse": "Registrarse",
+        "guardar": "Guardar",
+        "guardar_cargar": "Guardar y cargar archivo(s)",
+        "guardar_cerrar": "Guardar y cerrar",
+        "guardar_cerrar_cargar": "Guardar, cargar archivo(s) y cerrar",
+        "actualizar": "Actualizar",
+        "actualizar_cargar": "Actualizar y cargar archivo(s)",
         "actualizar_cerrar": "Actualizar y cerrar",
+        "actualizar_cerrar_cargar": "Actualizar, cargar archivo(s) y cerrar",
         "iniciar_sesion": "Iniciar sesión"
     },
     "mensajes": {
@@ -39,13 +43,14 @@
         "userExists": "Usuario ya existe"
     },
     "administrador": "ADMINISTRADOR",
-    "titulo": "portal administrativo de plataforma bi",
+    "titulo": "Portal administrador del <br/> Sistema de Inteligencia de Negocios",
     "menu": {
         "usuarios": "Usuarios",
         "catalogos": "Catálogos",
         "subida_informes": "Subida de informes",
         "subida_datos": "Subida de datos",
-        "dashboard": "Tablero"
+        "actualizar-informacion": "Actualizar información",
+        "dashboard": "Tableros"
     },
     "submenu": {
         "usuarios": {
@@ -58,6 +63,7 @@
             "indicadores": "Indicadores",
             "grupo-indicador": "Grupo indicadores",
             "indicadores-empresa": "Indicadores empresas",
+            "indicadores-valores": "Indicadores",
             "region": "Región",
             "pais": "País",
             "departamentos": "Departamentos",
@@ -95,6 +101,10 @@
             "exportaciones-primera-fecha": "Exportaciones y primera fecha: Fuente por País",
             "importaciones-primera-fecha": "Importaciones y primera fecha: Fuente por País",
             "ipc-pais-indicador": "Índice de precios al consumidor por país e indicador"
+        },
+        "actualizar-informacion": {
+            "documentos": "Documentos",
+            "indicadores-valores": "Indicadores"
         }
     },
     "formularios": {
@@ -148,6 +158,8 @@
                 "descripcion": { "nombre_campo": "Descripción", "descripcion": "" },
                 "estatus": { "nombre_campo": "Estatus", "descripcion": "" },
                 "acceso": { "nombre_campo": "Acceso", "descripcion": "" },
+                "imagen": { "nombre_campo": "Carátula del informe", "descripcion": "" },
+                "documento": { "nombre_campo": "Documento", "descripcion": "" },
                 "contenido": { "nombre_campo": "Contenido", "descripcion": "" },
                 "palabras": { "nombre_campo": "Palabras claves", "descripcion": "" },
                 "servicios": { "nombre_campo": "Servicios", "descripcion": "" },

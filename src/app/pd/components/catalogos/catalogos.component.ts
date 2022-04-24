@@ -16,6 +16,7 @@ import { EstadoPipePipe } from '../../../core/shared/pipes/estado-pipe.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Validators } from '@angular/forms';
 import { AppConfig } from '../../../core/services/appConfig';
+import { FileUploader } from '../../models/form.model';
 
 @Component({
   selector: 'app-catalogos',
@@ -164,7 +165,7 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
                 { 'columna': 'DESCRIPCION', 'nombre': 'catalogos.sector_economico.descripcion' },
                 { 'columna': 'IDENTIFICADOR', 'nombre': 'catalogos.sector_economico.identificador' },
                 { 'columna': 'LOGO', 'nombre': 'catalogos.sector_economico.logo', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "width:100px;height:auto", "src": `${this.appconfig.config.rutaPortal}/[value]`  } } }]  },
-                { 'columna': 'BANNER', 'nombre': 'catalogos.sector_economico.banner', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "width:100px;height:auto", "src": `${this.appconfig.config.rutaPortal}/[value]`  } } }]  },
+               // { 'columna': 'BANNER', 'nombre': 'catalogos.sector_economico.banner', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "width:100px;height:auto", "src": `${this.appconfig.config.rutaPortal}/[value]`  } } }]  },
                 { 'columna': 'ESTATUS', 'nombre': 'catalogos.sector_economico.estatus' },
                 { 'columna': 'ACCESO', 'nombre': 'catalogos.sector_economico.acceso' },
               ]
@@ -179,7 +180,7 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
               new TextboxForm ({ objectKey: 'DESCRIPCION' ,key: "descripcion",label: "catalogos.sector_economico.descripcion",required: true,order: 1}),
               new TextboxForm ({ objectKey: 'IDENTIFICADOR' ,key: "identificador",label: "catalogos.sector_economico.identificador",required: true,order: 1}),
               new FileForm ({ objectKey: 'LOGO' ,key: "logo",label: "catalogos.sector_economico.logo",required: true,order: 1}, { accept: "image/*" }),
-              new FileForm ({ objectKey: 'BANNER' ,key: "banner",label: "catalogos.sector_economico.banner",required: true,order: 1}, { accept: "image/*" }),
+              new FileUploader ({ objectKey: 'BANNER' ,key: "banner",label: "catalogos.sector_economico.banner",required: true,order: 1}, { accept: "image/*", multiple: true }),
               new CheckBoxForm ({ objectKey: 'ESTATUS' ,key: "estatus",label: "catalogos.sector_economico.estatus",required: true,order: 1}, { trueValue: "ACTIVO", falseValue: "INACTIVO" }),
               //new TextboxForm ({ objectKey: 'ESTATUS' ,key: "estatus",label: "catalogos.sector_economico.estatus",required: true,order: 1}),
               new DropdownForm ({ objectKey: 'ACCESO' ,key: "acceso",label: "catalogos.sector_economico.acceso",required: true,order: 4},

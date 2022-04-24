@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { CheckBoxForm, DetailForm, DropdownForm, EditorForm, TextboxForm } from "../../../models/form.model";
+import { CheckBoxForm, DetailForm, DropdownForm, EditorForm, TextboxForm, FileForm } from '../../../models/form.model';
 import { CRUDServiceService } from '../../../../core/services/crudservice.service';
 
 @Component({
@@ -133,6 +133,7 @@ export class DocumentosComponent implements OnInit, AfterViewInit {
           new DropdownForm({ objectKey: 'CODIGO_PRODUCTO', key: "codigo_producto", label: "tb.documento.producto", required: true, order: 1 }, { dataSource: 'listas/productos' }),
           new TextboxForm({ objectKey: 'DESCRIPCION_DOCUMENTO', key: "descripcion", label: "tb.documento.descripcion", required: true, order: 4 }, { isTextArea: true }),
           new CheckBoxForm({ objectKey: 'ESTATUS', key: "estatus", label: "tb.documento.estatus", required: true, order: 1 }, { trueValue: "ACTIVO", falseValue: "INACTIVO" }),
+          new FileForm({ objectKey: 'IMAGEN', key: "imagen", label: "tb.documento.imagen", required: false, order: 1 }, { accept: "image/*" }),
           new DropdownForm({ objectKey: 'ACCESO', key: "acceso", label: "tb.documento.acceso", required: true, order: 4 },
             {
               items: [
@@ -141,21 +142,30 @@ export class DocumentosComponent implements OnInit, AfterViewInit {
                 { descripcion: "nivel 1", id: "05" },
                 { descripcion: "nivel 2", id: "10" }
               ]
-            }),
-
-          new EditorForm({ objectKey: 'CONTENIDO', key: "contenido", label: "tb.documento.contenido", required: true, order: 1 }, { style: "height: 600px", command: { name: "visor", event: this.visorComando.bind(this) } })
+            })
         ]
-      }, {
-        titulo: "Palabras claves", controls: [
+      },
+      {
+        titulo: "Documento PDF", mustBeCreated: true, controls: [
+          new FileForm({ objectKey: 'RUTA_DOCUMENTO', key: "documento", label: "tb.documento.documento", required: false, order: 1 }, { accept: "application/pdf" }),
+        ]
+      },
+      {
+          titulo: 'Informe HTML', mustBeCreated: true, controls: [
+            new EditorForm({ objectKey: 'CONTENIDO', key: "contenido", label: "tb.documento.contenido", required: true, order: 1, defaultValue: "<div/>" }, { style: "height: 600px", command: { name: "visor", event: this.visorComando.bind(this) } })
+          ]
+      },
+      {
+        titulo: "Palabras claves", mustBeCreated: true  ,controls: [
           new DetailForm({ key: "palabras", "label": "tb.documento.palabras", order: 5, config: this.palabrasDetalle(), llavesForeas: { key: 'CODIGO_DOCUMENTO', column: 'CODIGO_DOCUMENTO' } })
         ]
       },
       {
-        titulo: "Servicios", controls: [
+        titulo: "Servicios", mustBeCreated: true , controls: [
           new DetailForm({ key: "servicios", "label": "tb.documento.servicios", order: 5, config: this.servicioDetalle(), llavesForeas: { key: 'CODIGO_DOCUMENTO', column: 'CODIGO_DOCUMENTO' } })
         ]
       }, {
-        titulo: "Grupos", controls: [
+        titulo: "Grupos", mustBeCreated: true, controls: [
           new DetailForm({ key: "grupos", "label": "tb.documento.grupos", order: 5, config: this.grupoDetalle(), llavesForeas: { key: 'CODIGO_DOCUMENTO', column: 'CODIGO_DOCUMENTO' } })
         ]
       }

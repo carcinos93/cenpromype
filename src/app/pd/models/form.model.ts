@@ -67,9 +67,13 @@ export class EditorForm extends inputBase<string> {
   controlType = 'editor';
   style: any = {};
   command: command;
-  constructor(options: any, o: { style?: any, command?: command  } = {}) {
+  saveFile: boolean = false;
+  maxLoadSizeMb: number = 5;
+  constructor(options: any, o: { style?: any, command?: command, saveFile?: boolean, maxLoadiSizeMb?: number  } = {}) {
     super(options);
     this.style = o.style || {};
+    this.maxLoadSizeMb = o.maxLoadiSizeMb ?? 5;
+    this.saveFile = o.saveFile ?? false;
     this.command = o.command || { name: "default",  event: () => {} };
   }
 }
@@ -105,6 +109,18 @@ export class FileForm extends inputBase<any> {
   constructor(options: any, o: { accept?: string } = {}) {
         super(options);
         this.accept = o.accept ?? "";
+   }
+}
+
+
+export class FileUploader extends inputBase<any> {
+  controlType = 'file-uploader';
+  multiple: boolean;
+  accept: string;
+  constructor(options: any, o: { accept?: string, multiple?: boolean } = {}) {
+        super(options);
+        this.accept = o.accept ?? "";
+        this.multiple = o.multiple ?? false;
    }
 }
 

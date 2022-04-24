@@ -1,0 +1,26 @@
+<input type="hidden" />
+<button [disabled]="disabled" pButton type="button" (click)="onCargarArchivos($event)" label="Cargar archivos"></button>
+<p-dialog [(visible)]="mostrarModal" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+
+    <p-fileUpload chooseLabel="Seleccionar" invalidFileSizeMessageDetail="El peso del archivo no puede ser mayor a 3MB" uploadLabel="Subir archivos" cancelLabel="Cancelar" (onSend)="onSend($event)" name="archivos[]" [url]="crud.getBaseApi + '/cargar-archivos'"
+        (onUpload)="onUpload($event)" [multiple]="multiple" [accept]="accept" [maxFileSize]="3000000">
+        <ng-template pTemplate="content">
+            <ul *ngIf="uploadedFiles.length">
+                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size / 1024.0}} kb</li>
+            </ul>
+        </ng-template>
+    </p-fileUpload>
+    <p-card [style]="{ width: '100%' }">
+        <div class="p-grid w-100 bg-black">
+            <div class="p-col-12 p-mb-4">
+                <p class="small">*Dar click sobre cada imagen que desea usar, otro click sobre la imagen para deseleccionar</p>
+            </div>
+            <div class="p-col-3" *ngFor="let imagen of imagenes; let i=index">
+                <img class="img-fluid" [ngClass]="{ 'selectedImage': selected[i] }" (click)="seleccionarImagen(i)" [src]="imagen.full_path" alt="">
+            </div>
+        </div>
+        <ng-template pTemplate="footer">
+            <button class="btn btn-primary" (click)="retornar($event)">Retornar seleccionados</button>
+        </ng-template>
+    </p-card>
+</p-dialog>
