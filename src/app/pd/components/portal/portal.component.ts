@@ -93,7 +93,7 @@ export class PortalComponent implements OnInit {
                   }).join(", ");
                   
                 }
-                console.log(v);
+
                 formularios[ v.ID_FORMULARIO ].push( v );
             });
             let j = 1;
