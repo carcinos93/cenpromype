@@ -21,7 +21,6 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   @ViewChild('form') formularioElemento: ElementRef | undefined;
   @Output() OnEdit = new EventEmitter();
   @Output() OnNew = new EventEmitter();
-  @Output() OnDblClick = new EventEmitter();
   @Output() OnLoadData = new EventEmitter();
   @Input() isDetail: boolean = false;
   @Input() bodyTemplate: TemplateRef<HTMLElement> = null as any;
@@ -32,9 +31,6 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   allowSelection: boolean = false;
   selectedRows: any = null;
   existUploadControls: boolean = false;
-  /**
-   * Establecer configuraciones 
-   */
   @Input() set config(o: any) {
     if (o != undefined && o != null) {
       this._config = o;
@@ -71,9 +67,6 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       });
       this.columnas = this._config.dataTable.columns || [];
       this.filtros = this._config.filters || [];
-      /**
-       * Si el tipo lista de realiza la carga de datos
-       */
       this.columnas.forEach((v, i) => {
         if (v.filter != null ) {
             if (v.filter.type == "dropdown") {
@@ -85,14 +78,13 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
    
 
   }
+
+
   controles: any[] = [];
   commandos: command[] = [];
   filtros: any = [];
   columnas: any[] = [];
   _keyValue: any = {};
-  /**
-   * La configuración de la llave foráneas
-   */
   @Input() set keyValue(o: any) {
       if (o.value != null) {
         this._keyValue = o;
@@ -195,7 +187,6 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   OnPage(data: any) {
 
   }
-  /**Función de filtros de la tabla */
   filtrar( valor: string, columna: string, op: string ) {
     if (valor != "0" && valor != "") {
       this.lastTableFilters[columna] = { value: valor, col: columna, op: op };
@@ -230,15 +221,12 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       this.cargando = true;
  
       this.OnLoadData.emit( event );
-      //Carga de los registros
+
       this.crudService.getAll(dataRoute, event).pipe( map( (res: any) => {
-         //Antes de retornar la información se aplican los pipes para transformar la información
           let d = res.data || [];
           d.forEach( (v:any, i: number) => {
               this.columnas.forEach((c: any ) => {
                   if (c.pipes != null) {
-                      //Se crea una columna adicional con sufijo formated 
-                      //No se aplica directamente en la columna para evitar fallos en el formulario
                       d[i][c.columna + '_formated'] = this.transformarDato( d[i][c.columna], c.pipes );
                   }
               });
@@ -246,9 +234,11 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
           res.data = d;
           return res;
       } )  ).subscribe((res: any) => {
-            this.datos = res.data || [];
-            this.totalRecord = res.total;
-            this.cargando = false;
+       // let arr = data.slice( event.first , (event.first??0) + (event.rows??0 ));;
+
+      this.datos = res.data || [];
+      this.totalRecord = res.total;
+      this.cargando = false;
         /*this.datos = data;
         this.totalRecord = data.length;*/
      }, (error) => {   
@@ -328,11 +318,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  dblClick(data: any): void {
-    this.OnDblClick.emit( data );
-  }
-
-
+  
 
   idRandom() {
      return (Math.random() * 65815 + Math.random() + 2697257 + (new Date().getMilliseconds())).toFixed(0);
@@ -398,7 +384,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
  }
 /**
  * Función que retorna los datos de los formularios
- * Solo envia los datos que han sido modificados
+ * Solo envia los datos que han sido "modificados"
  * @returns object
  */
 datosFormularios(nuevoRegistro: Boolean) {

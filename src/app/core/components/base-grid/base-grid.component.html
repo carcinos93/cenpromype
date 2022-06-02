@@ -77,7 +77,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dato>
-        <tr (dblclick)="dblClick(dato)" class="cursor-pointer">
+        <tr>
             <td *ngIf="allowSelection">
                 <ng-container *ngTemplateOutlet="selectionMode == 'single' ? single : multi"></ng-container>
                 <ng-template #single>
@@ -94,7 +94,6 @@
                     <ng-container *ngIf="d.pipes == null">
                         {{ dato[d.columna] }}
                     </ng-container>
-                    <!--Si existen Pipes, se mostrar el valor transformado  -->
                     <ng-container *ngIf="d.pipes != null">
                         <div [innerHTML]="dato[d.columna + '_formated'] | sanitizerHTML"></div>
                     </ng-container>
@@ -162,6 +161,11 @@
             </form>
         </p-tabPanel>
     </p-tabView>
+    <!-- <mat-stepper style="background-color: transparent;" #stepper>
+        <mat-step *ngFor="let formulario of formularios; let i=index" [stepControl]="formGroups[ '_formulario' + i ]" [label]="formulario.titulo">
+          
+        </mat-step>
+    </mat-stepper>-->
     <ng-template pTemplate="footer">
 
         <button type="button" (click)="enviarFormulario(false)" [disabled]="!enviarHabilitado" class="btn btn-primary">
@@ -179,3 +183,27 @@
         </button>
     </ng-template>
 </p-dialog>
+
+<!--
+<p-dialog (visibleChange)="cambioVisible($event)" [(visible)]="mostrarFormulario" [style]="{width: '50vw'}">
+    <form id="formulario" role="form" #form [formGroup]="formulario">
+        <div class="p-fluid">
+            <input #controlKey type="hidden" [value]="primarykey.value" [name]="primarykey.name" />
+            <div class="p-field" *ngFor="let control of controles">
+                <label class="form-label"> {{  control.label | encabezadoPipe | translate }} </label>
+                <app-control-form [datoSeleccionado]="datoSeleccionado" [control]="control"></app-control-form>
+            </div>
+        </div>
+
+    </form>
+    <ng-template pTemplate="footer">
+
+        <button form="formulario" type="button" (click)="enviarFormulario()" [disabled]="!enviarHabilitado" class="btn btn-primary">
+            <span *ngIf="!enviarHabilitado"  class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span *ngIf="enviarHabilitado">  {{ ("botones." +  (modo == "nuevo" ? "guardar" : "actualizar")) | translate }} </span>
+          </button>
+        <button type="button" (click)="mostrarFormulario = false" class="btn btn-warning">
+                {{ "botones.cancelar" | translate }}
+          </button>
+    </ng-template>
+</p-dialog>-->

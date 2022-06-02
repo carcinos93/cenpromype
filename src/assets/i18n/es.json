@@ -54,11 +54,10 @@
     },
     "submenu": {
         "usuarios": {
-            "usuario": "Usuarios sistema",
+            "usuario": "Usuarios",
             "rol": "Rol",
             "perfil": "Perfil",
-            "menu": "Menú",
-            "usuario-portal": "Usuarios portal"
+            "menu": "Menú"
         },
         "catalogos": {
             "indicadores": "Indicadores",
@@ -232,19 +231,6 @@
             }
         },
         "portal": {
-            "usuarios": {
-                "id": { "nombre_campo": "ID", "descripcion": "" },
-                "nombres": { "nombre_campo": "Nombres", "descripcion": "" },
-                "apellidos": { "nombre_campo": "Apellidos", "descripcion": "" },
-                "correo": { "nombre_campo": "Correo", "descripcion": "" },
-                "pais": { "nombre_campo": "País", "descripcion": "" },
-                "fecha_creacion": { "nombre_campo": "Fecha ingreso", "descripcion": "" }
-            },
-            "descargas": {
-                "id": { "nombre_campo": "ID", "descripcion": "" },
-                "fecha_creacion": { "nombre_campo": "Fecha registro", "descripcion": "" },
-                "documento": { "nombre_campo": "Documento", "descripcion": "" }
-            },
             "registro": {
                 "nombre": { "nombre_campo": "Nombre", "descripcion": "" },
                 "apellido": { "nombre_campo": "Apellido", "descripcion": "" },

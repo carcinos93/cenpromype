@@ -29,11 +29,9 @@ import {TooltipModule} from 'primeng/tooltip';
 import {SkeletonModule} from 'primeng/skeleton';
 import {FileUploadModule} from 'primeng/fileupload';
 import {CardModule} from 'primeng/card';
-import {MultiSelectModule} from 'primeng/multiselect';
 //import {EditorModule} from 'primeng/editor';
 const MODULOS = [ DataViewModule, TableModule, DynamicDialogModule, InputTextModule, DropdownModule,CalendarModule, DialogModule,
   InputNumberModule, InputTextareaModule, PasswordModule, CarouselModule, CheckboxModule, ImageModule,
-  MultiSelectModule,
   FileUploadModule,
   ProgressBarModule,
   DragDropModule,
