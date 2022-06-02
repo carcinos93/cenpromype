@@ -14,6 +14,9 @@ import {
 } from '../../models/form.model';
 import { EstadoPipePipe } from '../../../core/shared/pipes/estado-pipe.pipe';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Validators } from '@angular/forms';
+import { AppConfig } from '../../../core/services/appConfig';
+import { FileUploader } from '../../models/form.model';
 
 @Component({
   selector: 'app-catalogos',
@@ -28,7 +31,7 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
   gridConfig: any = {};
 
   constructor(private cruds: CRUDServiceService, public dialogService: DialogService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute, private appconfig: AppConfig) {
     super(dialogService);
     this.catalogo = this.activatedRoute.snapshot.paramMap.get('catalogo') as string;
     //let columnas = this.columnasGrid(this.catalogo);
@@ -64,11 +67,11 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
             dataRoute: 'catalogos/paises',
             primaryKey: { column: 'CODIGO_PAIS', key:'codigo_pais' },
             controls: [
-              new TextboxForm ({ objectKey: 'NOMBRE_PAIS' ,key: "nombre",label: "catalogos.pais.nombre_pais",required: true,order: 1}),
+              new TextboxForm ({ objectKey: 'NOMBRE_PAIS' ,key: "nombre",label: "catalogos.pais.nombre_pais" ,order: 1  }),
               new TextNumberForm ({ objectKey: 'SUPERFICIE' ,key: "superficie",label: "catalogos.pais.superficie",required: true,order: 2}, { minFractionDigits: 0 }),
               new TextboxForm ({ objectKey: 'CODIGO_DIVISA' ,key: "codigo_divisa",label: "catalogos.pais.codigo_divisa",required: true,order: 3}),
-              new TextboxForm ({ objectKey: 'ISO2' ,key: "iso2",label: "catalogos.pais.iso2",required: true,order: 4}),
-              new TextboxForm ({ objectKey: 'ISO3' ,key: "iso3",label: "catalogos.pais.iso3",required: true,order: 5}),
+              new TextboxForm ({ objectKey: 'ISO2' ,key: "iso2",label: "catalogos.pais.iso2",validators: [ {name: "required"}, {"name": "equalLength", params: [ 2 ]  } ],order: 4}),
+              new TextboxForm ({ objectKey: 'ISO3' ,key: "iso3",label: "catalogos.pais.iso3",validators: [ {name: "required"}, {"name": "equalLength", params: [ 3 ]  } ],order: 5}),
             ]
           }
         },
@@ -161,7 +164,8 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
                 { 'columna': 'SECTOR_ECONOMICO', 'nombre': 'catalogos.sector_economico.sector_economico' },
                 { 'columna': 'DESCRIPCION', 'nombre': 'catalogos.sector_economico.descripcion' },
                 { 'columna': 'IDENTIFICADOR', 'nombre': 'catalogos.sector_economico.identificador' },
-                { 'columna': 'LOGO', 'nombre': 'catalogos.sector_economico.logo', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "width:100px;height:auto", "src": "/portalcenpromype/[value]"  } } }]  },
+                { 'columna': 'LOGO', 'nombre': 'catalogos.sector_economico.logo', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "width:100px;height:auto", "src": `${this.appconfig.config.rutaPortal}/[value]`  } } }]  },
+               // { 'columna': 'BANNER', 'nombre': 'catalogos.sector_economico.banner', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "width:100px;height:auto", "src": `${this.appconfig.config.rutaPortal}/[value]`  } } }]  },
                 { 'columna': 'ESTATUS', 'nombre': 'catalogos.sector_economico.estatus' },
                 { 'columna': 'ACCESO', 'nombre': 'catalogos.sector_economico.acceso' },
               ]
@@ -176,6 +180,7 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
               new TextboxForm ({ objectKey: 'DESCRIPCION' ,key: "descripcion",label: "catalogos.sector_economico.descripcion",required: true,order: 1}),
               new TextboxForm ({ objectKey: 'IDENTIFICADOR' ,key: "identificador",label: "catalogos.sector_economico.identificador",required: true,order: 1}),
               new FileForm ({ objectKey: 'LOGO' ,key: "logo",label: "catalogos.sector_economico.logo",required: true,order: 1}, { accept: "image/*" }),
+              new FileUploader ({ objectKey: 'BANNER' ,key: "banner",label: "catalogos.sector_economico.banner",required: true,order: 1}, { accept: "image/*", multiple: true }),
               new CheckBoxForm ({ objectKey: 'ESTATUS' ,key: "estatus",label: "catalogos.sector_economico.estatus",required: true,order: 1}, { trueValue: "ACTIVO", falseValue: "INACTIVO" }),
               //new TextboxForm ({ objectKey: 'ESTATUS' ,key: "estatus",label: "catalogos.sector_economico.estatus",required: true,order: 1}),
               new DropdownForm ({ objectKey: 'ACCESO' ,key: "acceso",label: "catalogos.sector_economico.acceso",required: true,order: 4},
@@ -233,7 +238,7 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
             columns: [
               { 'columna': 'NOMBRE_SERVICIO', 'nombre': 'catalogos.servicios.nombre' },
               { 'columna': 'DESCRIPCION', 'nombre': 'catalogos.servicios.descripcion' },
-              { 'columna': 'LOGO', 'nombre': 'catalogos.servicios.logo', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "height:75px;width:auto", "src": "/portalcenpromype/[value]"  } } }]  },
+              { 'columna': 'LOGO', 'nombre': 'catalogos.servicios.logo', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "height:75px;width:auto", "src": `${this.appconfig.config.rutaPortal}/[value]`  } } }]  },
               { 'columna': 'ESTATUS', 'nombre': 'catalogos.servicios.estatus' },
               { 'columna': 'ACCESO', 'nombre': 'catalogos.servicios.acceso' }
             ]
@@ -241,7 +246,7 @@ export class CatalogosComponent extends BaseComponent implements OnInit {
           insertRoute: 'catalogos/servicio',
           updateRoute: 'catalogos/servicio',
           dataRoute: 'catalogos/servicio',
-          primaryKey: { column: 'CODIGO_INDICADOR', key:'codigo_indicador' },
+          primaryKey: { column: 'CODIGO_SERVICIO', key:'codigo_servicio' },
           controls: [
             new TextboxForm ({ objectKey: 'NOMBRE_SERVICIO' ,key: "nombre",label: "catalogos.servicios.nombre",required: true,order: 1}),
             new TextboxForm ({ objectKey: 'DESCRIPCION' ,key: "descripcion",label: "catalogos.servicios.descripcion",required: false,order: 2}, { isTextArea: true }),

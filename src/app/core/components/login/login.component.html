@@ -9,7 +9,7 @@
                 </div>
                 <div class="p-fluid">
                     <div class="p-field p-grid">
-                        <label class="col-form-label p-col-3"> {{ "usuario" | translate }} </label>
+                        <label class="col-form-label p-col-3"> {{ "formularios.login.usuario.nombre_campo" | translate }} </label>
                         <div class="p-col">
                             <input [(ngModel)]="usuario" formControlName="usuario" class="form-control " type="text">
                             <div *ngIf="controlVerificacion('usuario')">
@@ -20,7 +20,7 @@
                         </div>
                     </div>
                     <div class="p-field p-grid">
-                        <label class="col-form-label p-col-3"> {{ "password" | translate }} </label>
+                        <label class="col-form-label p-col-3"> {{ "formularios.login.password.nombre_campo" | translate }} </label>
                         <div class="p-col">
                             <input [(ngModel)]="password" formControlName="password" class="form-control " type="password">
                             <div *ngIf="controlVerificacion('password')">
@@ -32,9 +32,9 @@
                     </div>
                 </div>
                 <div class="row mt-md-3">
-                    <div class="col-md-9 m-auto">
-                        <button type="submit" class="btn btn-primary w-100">
-                            INICIAR SESIÓN
+                    <div class="col-md-9 m-auto text-center">
+                        <button type="submit" class="p-button p-button-primary">
+                            {{ "botones.iniciar_sesion" | translate }}
                       </button>
                     </div>
                 </div>

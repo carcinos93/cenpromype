@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ControlContainer } from '@angular/forms';
 import { LazyLoadEvent } from 'primeng/api';
 import { map } from 'rxjs/operators';
 import { configFormBuild } from 'src/app/pd/models/form.model';
@@ -14,41 +14,66 @@ import {TranslateService} from "@ngx-translate/core";
 @Component({
   selector: 'app-base-grid',
   templateUrl: './base-grid.component.html',
-  styles: [
-  ]
+  styleUrls: ['./style.scss'],
 })
 export class BaseGridComponent implements OnInit, AfterViewInit {
   @ViewChild('controlKey') llavePrimaria: ElementRef | undefined;
   @ViewChild('form') formularioElemento: ElementRef | undefined;
   @Output() OnEdit = new EventEmitter();
   @Output() OnNew = new EventEmitter();
+  @Output() OnDblClick = new EventEmitter();
   @Output() OnLoadData = new EventEmitter();
   @Input() isDetail: boolean = false;
   @Input() bodyTemplate: TemplateRef<HTMLElement> = null as any;
   @Input() titulo: string = '';
-  _config :  configFormBuild = { multi: false ,dataTable: { columns: [] }, controls: [], commands: [], primaryKey: { column: '', key: ''  }, botonesEstado: {}} as any;
+  
+  _config :  configFormBuild = { selectionMode:  "single", allowSelection: false,multi: false ,dataTable: { columns: [] }, controls: [], commands: [], primaryKey: { column: '', key: ''  }, botonesEstado: {}} as any;
+  selectionMode:  "single" | "multi" = "single";
+  allowSelection: boolean = false;
+  selectedRows: any = null;
+  existUploadControls: boolean = false;
+  /**
+   * Establecer configuraciones 
+   */
   @Input() set config(o: any) {
     if (o != undefined && o != null) {
       this._config = o;
 
       this.botonesEstado = this._config.botonesEstado || {};
       this.controles = this._config.controls || [];
-  
+      this.selectionMode = this._config.selectionMode || "single";
+      this.allowSelection = this._config.allowSelection ?? false;
 
       if (this._config.multi) {
           this.formularios = this._config.controls;
       } else { 
-        this.formularios.push( {  "titulo": "", controls: this._config.controls || [] } );
+        this.formularios.push( {  "titulo": "", controls: this._config.controls || [], mustBeCreated: false } );
       }
+
   
       this.formularios.forEach(( v: any, i: number ) => {
           let m = `_formulario${i}`;
           this.formGroups[m] = new FormGroup({});
+          
+        //revisar si hay control de File o Editor (editor tiene un apartado de carga de archivo)
+          if (v.controls) {
+              if ((  v.controls as inputBase<any>[] ).filter((v1, i1) => {
+                   return "file editor file-uploader".includes(v1.controlType)
+              }).length > 0) {
+                this.existUploadControls = true;
+              }
+          }
       });
   
       this.commandos = this._config.commands || [];
+      this.commandos.forEach((v, i) => {
+        v.event.bind(this);
+      });
       this.columnas = this._config.dataTable.columns || [];
       this.filtros = this._config.filters || [];
+      /**
+       * Si el tipo lista de realiza la carga de datos
+       */
       this.columnas.forEach((v, i) => {
         if (v.filter != null ) {
             if (v.filter.type == "dropdown") {
@@ -60,13 +85,14 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
    
 
   }
-
-
   controles: any[] = [];
   commandos: command[] = [];
   filtros: any = [];
   columnas: any[] = [];
   _keyValue: any = {};
+  /**
+   * La configuración de la llave foráneas
+   */
   @Input() set keyValue(o: any) {
       if (o.value != null) {
         this._keyValue = o;
@@ -87,6 +113,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   modo: string = 'nuevo';
   dropDownList = {} as any;
   cargando: boolean = false;
+  cargandoFormulario: boolean = false;
   filtrosAplicados: any = {};
   mensajeConfirmacion: string = '';
   botonesEstado: any = {
@@ -168,6 +195,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   OnPage(data: any) {
 
   }
+  /**Función de filtros de la tabla */
   filtrar( valor: string, columna: string, op: string ) {
     if (valor != "0" && valor != "") {
       this.lastTableFilters[columna] = { value: valor, col: columna, op: op };
@@ -182,7 +210,6 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   }  
 
   cargaTabla(event: any) {
-    console.log(event);
     if (this._config == undefined) {
       return;
     }
@@ -203,12 +230,15 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       this.cargando = true;
  
       this.OnLoadData.emit( event );
-
+      //Carga de los registros
       this.crudService.getAll(dataRoute, event).pipe( map( (res: any) => {
+         //Antes de retornar la información se aplican los pipes para transformar la información
           let d = res.data || [];
           d.forEach( (v:any, i: number) => {
               this.columnas.forEach((c: any ) => {
                   if (c.pipes != null) {
+                      //Se crea una columna adicional con sufijo formated 
+                      //No se aplica directamente en la columna para evitar fallos en el formulario
                       d[i][c.columna + '_formated'] = this.transformarDato( d[i][c.columna], c.pipes );
                   }
               });
@@ -216,11 +246,9 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
           res.data = d;
           return res;
       } )  ).subscribe((res: any) => {
-       // let arr = data.slice( event.first , (event.first??0) + (event.rows??0 ));;
-
-      this.datos = res.data || [];
-      this.totalRecord = res.total;
-      this.cargando = false;
+            this.datos = res.data || [];
+            this.totalRecord = res.total;
+            this.cargando = false;
         /*this.datos = data;
         this.totalRecord = data.length;*/
      }, (error) => {   
@@ -232,32 +260,46 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
 
   }
 
- // nuevo() { this.OnNew.emit(null); }
- /* editar(dato: any) {
-     this.OnEdit.emit(dato);
-   }*/
 
    editar(data: any): void {
+    this.cargandoFormulario = true;
     const __id = this.idRandom();
     this.datoSeleccionado = {...data, __id : __id};
-    this.modo= 'editar';
-    this.mostrarFormulario = true;
-    this.primarykey.value = data[this._config.primaryKey.column];
-    this.primarykey.name = data[this._config.primaryKey.key];
-    this.tabViewIndex = 0;
-    //this.formulario?.abrirFormulario( this.config );
-    //this.formulario?.abrirFormulario( this.formBuilder( 'edit', data ).config );
-   // this.editRecord(FormularioIndicadorComponent,  data , "Editar registro" );
-    /*let datos = { data:data, modo: 'actualizar' };
-    this.dialogService.open( FormularioIndicadorComponent,{ header: "Editar registro", width: "70%", data: datos } );*/
+
+    var accion = () => {
+      this.OnEdit.emit( { dato: this.datoSeleccionado, formulario: null  } );
+      this.modo= 'editar';
+      this.mostrarFormulario = true;
+      this.primarykey.value = data[this._config.primaryKey.column];
+      this.primarykey.name = data[this._config.primaryKey.key];
+      this.tabViewIndex = 0;
+      this.cargandoFormulario = false;
+    };
+
+    if ((this._config.recuperarRoute || "") != "" ) {
+      let recuperarRoute = this._config.recuperarRoute;
+      this.crudService.get( data[this._config.primaryKey.column], recuperarRoute ).subscribe((data) => {
+            this.datoSeleccionado = data;
+            accion();
+          
+      }, (err) => {
+        console.log(err);
+      });
+
+    } else {
+        accion();
+    }
+    
   }
 
   nuevo(): void {
     const __id = this.idRandom();
+    this.cargandoFormulario = true;
     this.datoSeleccionado = { __id:  __id };
+    this.OnNew.emit( { dato: this.datoSeleccionado, formulario: null  } );
     this.modo= 'nuevo';
     this.mostrarFormulario = true;
-    this.OnNew.emit( { dato: this.datoSeleccionado, formulario: null  } );
+    this.cargandoFormulario = false;
     this.tabViewIndex = 0;
     //this.formulario?.abrirFormulario( this.config);
 
@@ -286,7 +328,11 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+  dblClick(data: any): void {
+    this.OnDblClick.emit( data );
+  }
+
+
 
   idRandom() {
      return (Math.random() * 65815 + Math.random() + 2697257 + (new Date().getMilliseconds())).toFixed(0);
@@ -352,13 +398,29 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
  }
 /**
  * Función que retorna los datos de los formularios
+ * Solo envia los datos que han sido modificados
  * @returns object
  */
-datosFormularios() {
-   let values = {};
+datosFormularios(nuevoRegistro: Boolean) {
+   let values = {} as any;
     for (let v in this.formGroups) {
         let r = this.formGroups[v];
-        values = { ...r.value, ...values };
+        
+        (Object.entries(r.controls) as [ [ key: string, control: FormControl ] ])
+        .filter((v) => v[1].dirty || nuevoRegistro || this.isDetail ) /*** para evitar problemas con los registros nuevos */
+        .forEach((v ) => { 
+          values[ v[0] ] = v[1].value;
+        } );
+        
+        /*.map((v, i) => { 
+            let o = {} as  { [key: string] : FormControl };
+            o[v[0]] = v[1]
+            return o;
+        }) ;
+        let controlValues = controls.filter( (v, i) => v.dirty ).map( (v, i) => v.value );*/
+    
+        //values = { ...controls, ...values };
+        
     }
     return values;
 }
@@ -372,19 +434,37 @@ limpiarFormularios() {
   }
 }
 
+estadoOriginal() {
+  for (let f in this.formGroups) {
+    let formulario: FormGroup = this.formGroups[f];
+    formulario.markAsPristine();
+        for (let key in formulario.controls)
+        {
+            let control = formulario.controls[key];
+            if (key.includes("_file")) {
+               control.setValue(null);
+               control.markAsPristine();
+            }
+        }
+
+  
+}
+}
+
 validarFormularios() {
     let valido = true;
   for (let f in this.formGroups) {
     let formulario: FormGroup = this.formGroups[f];
     if (formulario.invalid) {
         formulario.markAllAsTouched();
+      
         valido = false;
     }
 }
   return valido;
 }
 
-  enviarFormulario() {
+  enviarFormulario(cerrar: boolean = true) {
     //console.log(this.formulario.value);
     //return;
     if (!this.validarFormularios()) {
@@ -392,7 +472,8 @@ validarFormularios() {
   }
   
     const __id = this.datoSeleccionado['__id'];
-      let ruta = this.modo == 'nuevo' ? this._config.insertRoute :  this._config.updateRoute;
+
+    let ruta = this.modo == 'nuevo' ? this._config.insertRoute :  this._config.updateRoute;
      let sus;
 
      const formData = new FormData();
@@ -400,15 +481,13 @@ validarFormularios() {
       formData.append( this._keyValue.key, this._keyValue.value  );
      }
 
-     const datoFormulario: any = this.datosFormularios();
+     const datoFormulario: any = this.datosFormularios( this.modo == 'nuevo' );
 
      if (__id != undefined) {
        formData.append( '__id', __id);
      }
 
-     
-    
-
+  
     this.enviarHabilitado = false;
 
      /**TODO */
@@ -425,9 +504,22 @@ validarFormularios() {
         if (resp.success) {
           //this.formularioElemento?.nativeElement.reset();
           this.snack.open(resp.message,"", { verticalPosition: "bottom", duration: 4000, panelClass: ['mat-toolbar', 'bg-success', 'text-light'] });
-          this.mostrarFormulario = false
-            
+          if (cerrar) {
+              this.mostrarFormulario = false;
+          } else {
+            if (this.modo == 'nuevo') {
+                this.editar( resp.data );
+            } else if (this.modo = 'editar') {
+                 for (let key in resp.data) {
+                    this.datoSeleccionado[key] = resp.data[key];
+                 }
+            }
+
+            this.estadoOriginal();
+
+          }
           this.recargarDatos();
+
           //this.OnSubmit.emit(this.data);
         } else {
           this.snack.open(resp.message,"", { verticalPosition: "bottom", duration: 4000, panelClass: ['mat-toolbar', 'bg-warning', 'text-light'] });
@@ -437,7 +529,10 @@ validarFormularios() {
         this.snack.open("Servicio no disponible","", { verticalPosition: "bottom", duration: 4000, panelClass: ['mat-toolbar', 'bg-error', 'text-light'] });
      }, () => {
        this.enviarHabilitado = true;
-       this.limpiarFormularios();
+       if (cerrar){
+        this.limpiarFormularios();
+       }
+       
      } );
 
   }

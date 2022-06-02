@@ -1,9 +1,9 @@
 <p-tabView>
     <p-tabPanel header="Menu principal">
-        <p-tree (onNodeDrop)="soltarNodo($event)" [droppableNodes]="true" [value]="menuPrincipal" selectionMode="single" (onNodeSelect)="seleccionarNodo($event)">
+        <p-tree (onNodeDrop)="soltarNodo($event)" [validateDrop]="true" droppableScope="self" draggableScope="self" [draggableNodes]="true" [droppableNodes]="true" [value]="menuPrincipal">
         </p-tree>
     </p-tabPanel>
-    <p-tabPanel header="Roles x menu">
+    <p-tabPanel header="Roles por menú">
         <p-panel header="" [toggleable]="true">
             <ng-template pTemplate="header">
                 <div class="p-fluid">

@@ -19,9 +19,10 @@ import {ImagenPipe} from "./core/shared/pipes/imagen.pipe";
 import {UrlPipe} from "./core/shared/pipes/url.pipe";
 import {UpperCasePipe} from "@angular/common";
 import { LoginInterceptorService } from './core/interceptors/login-interceptor.service';
+import { AppConfig } from './core/services/appConfig';
 
-export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json?v2.5');
+export function createTranslateLoader(http: HttpClient, appConfig: AppConfig) {
+  return new TranslateHttpLoader(http,'./assets/i18n/', `.json?${appConfig.config.versions.i18n}`);
 }
 
 @NgModule({
@@ -38,7 +39,7 @@ export function createTranslateLoader(http: HttpClient) {
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient]
+        deps: [HttpClient, AppConfig]
       },
     }),
     SharedModule.forRoot(),

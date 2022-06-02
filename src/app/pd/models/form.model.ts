@@ -1,4 +1,5 @@
 
+
 export class inputBase<T> {
   value: T|undefined;
   key: string;
@@ -22,10 +23,10 @@ export class inputBase<T> {
     type?: string;
     defaultValue?: any;
     validators?: [];
-    onchange?: (value: any) => void
+    onchange?: (...value: any) => void
   } = {  }) {
 
-   this.onchange = options.onchange || function (value) {};
+   this.onchange = options.onchange || function (...value) {};
   this.objectKey = options.objectKey || '';
   this.value = options.value;
   this.key = options.key || '';
@@ -49,6 +50,14 @@ export class TextboxForm extends inputBase<string> {
   }
 }
 
+export class HiddenForm extends inputBase<string> {
+  controlType = 'hidden';
+  constructor(options: any)
+  {
+    super(options);
+  }
+}
+
 export class TextNumberForm extends inputBase<string> {
   controlType = 'number';
   minFractionDigits: number;
@@ -65,9 +74,15 @@ export class PasswordForm extends inputBase<string> {
 export class EditorForm extends inputBase<string> {
   controlType = 'editor';
   style: any = {};
-  constructor(options: any, o: { style?: any  } = {}) {
+  command: command;
+  saveFile: boolean = false;
+  maxLoadSizeMb: number = 5;
+  constructor(options: any, o: { style?: any, command?: command, saveFile?: boolean, maxLoadiSizeMb?: number  } = {}) {
     super(options);
     this.style = o.style || {};
+    this.maxLoadSizeMb = o.maxLoadiSizeMb ?? 5;
+    this.saveFile = o.saveFile ?? false;
+    this.command = o.command || { name: "default",  event: () => {} };
   }
 }
 export class CheckBoxForm extends  inputBase<any> {
@@ -105,6 +120,18 @@ export class FileForm extends inputBase<any> {
    }
 }
 
+
+export class FileUploader extends inputBase<any> {
+  controlType = 'file-uploader';
+  multiple: boolean;
+  accept: string;
+  constructor(options: any, o: { accept?: string, multiple?: boolean } = {}) {
+        super(options);
+        this.accept = o.accept ?? "";
+        this.multiple = o.multiple ?? false;
+   }
+}
+
 export class DetailForm  {
   controlType = 'detail';
   label: string;
@@ -133,6 +160,8 @@ export class DetailForm  {
 
 export interface configFormBuild {
   controls: any[];
+  selectionMode: "single" | "multi",
+  allowSelection: boolean,
   commands: command[];
   filters: any[];
   multi: boolean;
@@ -140,6 +169,7 @@ export interface configFormBuild {
   updateRoute: string;
   insertRoute: string;
   dataRoute: any;
+  recuperarRoute: string,
   dataTable: {
     columns: any[];
   },

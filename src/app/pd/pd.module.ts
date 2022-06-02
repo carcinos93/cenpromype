@@ -21,6 +21,8 @@ import { ProductosComponent } from './components/tb/productos/productos.componen
 import { DocumentosServicioComponent } from './components/tb/documentos-servicio/documentos-servicio.component';
 import { DocumentosComponent } from './components/tb/documentos/documentos.component';
 import { MenuComponent } from './components/inicio/menu/menu.component';
+import { FormularioRegistroComponent } from './components/catalogos/formulario-registro/formulario-registro.component';
+import { PortalComponent } from './components/portal/portal.component';
 
 
 
@@ -44,7 +46,9 @@ import { MenuComponent } from './components/inicio/menu/menu.component';
    ProductosComponent,
    DocumentosServicioComponent,
    DocumentosComponent,
-   MenuComponent
+   MenuComponent,
+   FormularioRegistroComponent,
+   PortalComponent
   ],
   imports: [
     CommonModule,

@@ -1,3 +1,11 @@
 <app-base-grid [titulo]="'submenu.catalogos.documentos'  | translate " [config]="config">
 
 </app-base-grid>
+<p-dialog [(visible)]="mostrarFormulario" [style]="{width: '60vw', height: '50vw', 'text-align' : 'center'}">
+    <div class="p-d-flex" style="width: 100%;height: 100%;">
+        <p-progressSpinner class="p-d-flex p-as-center p-col-12" *ngIf="frameCargando"></p-progressSpinner>
+        <iframe [ngStyle]="{ 'height' : !frameCargando ? '100%' : '0'  }" #iframe [src]="urlFrame | url" style="width: 100%;">
+        
+            </iframe>
+    </div>
+</p-dialog>

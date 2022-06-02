@@ -1,0 +1,15 @@
+<div class="p-grid">
+    <div class="p-col-fixed p-as-center">
+        <p-image [preview]="true" *ngIf="isImage" [src]="fullUrl" alt="Image" width="200">
+            <ng-template pTemplate="indicator">
+                Ampliar imagen
+            </ng-template>
+        </p-image>
+    </div>
+    <div class="p-col-fixed p-as-center">
+        <a *ngIf="!isImage && fileName != ''" [href]="fullUrl" target="_BLANK">
+            <i class="pi pi-file fa-2x">  </i> {{ fileName }}
+        </a>
+
+    </div>
+</div>

@@ -1,0 +1,44 @@
+<p-tabView>
+    <p-tabPanel header="Usuarios">
+        <app-base-grid (OnDblClick)="dbClick($event)" [titulo]="'Usuarios portal'  | translate " [config]="config">
+        </app-base-grid>
+    </p-tabPanel>
+    <p-tabPanel header="Reportes">
+        <div class="p-field">
+            <p-multiSelect [ngClass]="['w-100']" [options]="listaFormularios" [(ngModel)]="formularioSeleccionado" [maxSelectedLabels]="2" optionLabel="descripcion" [selectionLimit]="2" optionValue="id"></p-multiSelect>
+            <br/>
+        </div>
+        <div class="p-field">
+            <p-button label="Generar reporte" [disabled]="formularioSeleccionado == null" (onClick)="generarReporte($event)"></p-button>
+        </div>
+
+
+
+    </p-tabPanel>
+</p-tabView>
+
+
+<p-dialog [(visible)]="dialogo" [style]="{width: '50vw'}">
+    <p-tabView>
+        <p-tabPanel header="Registro">
+            <p-tabView>
+
+                <p-tabPanel *ngFor="let formulario of formularios; let i=index" [header]="formulario.id">
+                    <div class="container">
+                        <div class="form-group" *ngFor="let respuesta of formulario.respuestas">
+                            <label> {{  respuesta.RESPUESTA.label }}: </label>
+                            <span class="form-control p-text-bold">
+                                {{ respuesta.valorDesc }}
+                            </span>
+                        </div>
+                    </div>
+                </p-tabPanel>
+            </p-tabView>
+        </p-tabPanel>
+        <p-tabPanel header="Descargas">
+            <app-base-grid [titulo]="'descargas'  | translate " [config]="configDescargas" [keyValue]="{ key: 'id_usuario', column: 'ID_USUARIO', value: idusuario   }">
+            </app-base-grid>
+        </p-tabPanel>
+    </p-tabView>
+
+</p-dialog>

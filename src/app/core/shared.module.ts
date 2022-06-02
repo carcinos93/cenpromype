@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule, DecimalPipe, UpperCasePipe, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -17,12 +17,22 @@ import { ImagenPipe } from './shared/pipes/imagen.pipe';
 import { SanitizerHTMLPipe } from './shared/pipes/sanitizer-html.pipe';
 import {ConfirmationService} from "primeng/api";
 import { GridDetailComponent } from './components/grid-detail/grid-detail.component';
+import { FileUploaderComponent } from './shared/controls/file-uploader/file-uploader.component';
+import { FileVisorComponent } from './shared/controls/file-visor/file-visor.component';
+import { AppConfig } from './services/appConfig';
+
+const appInitializerFn = (appConfig: AppConfig) => {
+  return () => {
+    return appConfig.loadAppConfig();
+  };
+};
+
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
-  declarations: [ EncabezadoPipePipe, EstadoPipePipe, UrlPipe, FormDialogComponent, ControlFormComponent, BaseGridComponent, ImagenPipe, SanitizerHTMLPipe, GridDetailComponent ],
+  declarations: [ EncabezadoPipePipe, EstadoPipePipe, UrlPipe,FileUploaderComponent, FormDialogComponent, ControlFormComponent, BaseGridComponent, ImagenPipe, SanitizerHTMLPipe, GridDetailComponent, FileVisorComponent ],
   schemas: [
      CUSTOM_ELEMENTS_SCHEMA
   ],
@@ -40,15 +50,21 @@ export function createTranslateLoader(http: HttpClient) {
 
 
     }, isolate: false})*/
-  ],  providers: [ EncabezadoPipePipe, EstadoPipePipe, ImagenPipe, UrlPipe, UpperCasePipe, DecimalPipe, DatePipe, ConfirmationService  ]
-  , exports: [ FormsModule,ReactiveFormsModule,TranslateModule, EncabezadoPipePipe, EstadoPipePipe, ImagenPipe, UrlPipe,
-    BaseGridComponent ,FormDialogComponent,GridDetailComponent,ControlFormComponent, PrimeNgModule, MaterialModule  ]
+  ],  providers: [ EncabezadoPipePipe, EstadoPipePipe, ImagenPipe, UrlPipe, UpperCasePipe, DecimalPipe,SanitizerHTMLPipe, DatePipe, ConfirmationService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFn,
+      multi: true,
+      deps: [AppConfig]
+    }  ]
+  , exports: [ FormsModule,ReactiveFormsModule,TranslateModule, EncabezadoPipePipe,SanitizerHTMLPipe, EstadoPipePipe, ImagenPipe, UrlPipe,
+    BaseGridComponent ,FormDialogComponent, FileVisorComponent,FileUploaderComponent,GridDetailComponent,ControlFormComponent, PrimeNgModule, MaterialModule  ]
 })
 export class SharedModule {
 
   static forRoot(): ModuleWithProviders {
     return {
-     ngModule: SharedModule,
+      ngModule: SharedModule,
       providers: []
     }
   }

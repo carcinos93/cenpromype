@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {CheckBoxForm, DetailForm, DropdownForm, FileForm, TextboxForm} from "../../../models/form.model";
+import { AppConfig } from '../../../../core/services/appConfig';
 
 @Component({
   selector: 'app-productos',
@@ -9,7 +10,7 @@ import {CheckBoxForm, DetailForm, DropdownForm, FileForm, TextboxForm} from "../
 })
 export class ProductosComponent implements OnInit {
   config: any = { controls: [], primaryKey: { column: '', key: '' } };
-  constructor() { }
+  constructor(private appconfig: AppConfig) { }
 
   ngOnInit(): void {
     this.config = this.encabezado();
@@ -20,7 +21,7 @@ export class ProductosComponent implements OnInit {
       insertRoute: 'TB/producto-sector',
       updateRoute: 'TB/producto-sector',
       dataRoute: 'TB/producto-sector',
-      botonesEstado: { 'borrar': false },
+      botonesEstado: { 'borrar': true },
       primaryKey: { column: 'ID', key:'id' },
       dataTable: {
         columns: [
@@ -34,7 +35,7 @@ export class ProductosComponent implements OnInit {
       ]
     };
   }
-
+ 
   encabezado() {
     return {
       insertRoute: 'TB/producto',
@@ -46,7 +47,7 @@ export class ProductosComponent implements OnInit {
       dataTable: {
         columns: [
           { 'columna': 'NOMBRE_PRODUCTO', 'nombre': 'tb.producto.nombre' },
-          { 'columna': 'LOGO', 'nombre': 'tb.producto.logo' },
+          { 'columna': 'LOGO', 'nombre': 'tb.producto.logo', 'pipes': [{ 'pipe' : 'imagen', 'parametros': { p: { "style": "height:75px;width:auto;background-color:black", "src": `${this.appconfig.config.rutaPortal}/[value]`  } } }]  },
           { 'columna': 'ESTATUS', 'nombre': 'tb.producto.estatus' },
           { 'columna': 'ACCESO', 'nombre': 'tb.producto.acceso', labelValues: { "00" : "no paga", "05" : "nivel 1", "10" : "nivel 2" } }
         ]

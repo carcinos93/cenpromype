@@ -1,101 +1,28 @@
-<ul class="nav flex-column menu pl-3 pt-3">
-    <li class="nav-item text-end">
+<ul class="nav flex-column pl-3 pt-3" [ngClass]="{ 'menu' : menuCargado }">
+    <li class="nav-item text-end" *ngIf="menuCargado">
         <a href="#" class="m-2">
             <i class="fa fa-chevron-left" aria-hidden="true"></i>
         </a>
     </li>
+
     <li class="nav-item" *ngFor="let m of menu; let i = index">
         <a class="nav-link collapsed nav-link cursor-pointer" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse1" [href]="'#collapse'  + i.toString() ">
              {{ "menu." + m.MENU | translate }}  <i class="fa fa-caret-down" aria-hidden="true"></i> <i class="fa fa-caret-up" aria-hidden="true"></i> </a>
         <ul class="nav flex-column collapse" [id]="'collapse' + i.toString() ">
-            <li class="nav-item" *ngFor="let s of m.SUBMENU">
-                <!-- submenu -->
-                <a *ngIf="s.url != '#'" class="nav-link cursor-pointer" [class.disabled]="s.url == '#'" (click)="menuClick(s.url)"> {{ "submenu." + m.MENU + "." +  s.nombre | translate }} </a>
-            </li>
+            <li class="nav-item" *ngFor="let s of m.SUBMENU" [class.active]="urlActiva(s.url)" [class.p-d-none]="s.url == '#'">
 
-        </ul>
-    </li>
-    <!-- <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse1" href="#collapse1"> {{ "menu.usuarios" | translate }}  <i class="fa fa-caret-down" aria-hidden="true"></i> <i class="fa fa-caret-up" aria-hidden="true"></i> </a>
-        <ul class="nav flex-column collapse" id="collapse1">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+                <a #enlace class="nav-link cursor-pointer" [class.disabled]="s.url == '#'" (click)="menuClick(s.url);"> {{ "submenu." + m.MENU + "." +  s.nombre | translate }} </a>
             </li>
         </ul>
     </li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse2" href="#collapse2">{{ "menu.catalogos" | translate }}  <i class="fa fa-caret-down" aria-hidden="true"></i> <i class="fa fa-caret-up" aria-hidden="true"></i> </a>
-        <ul class="nav flex-column collapse" id="collapse2">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-        </ul>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse3" href="#collapse3">{{ "menu.subida_informes" | translate }} <i class="fa fa-caret-down" aria-hidden="true"></i> <i class="fa fa-caret-up" aria-hidden="true"></i> </a>
-        <ul class="nav flex-column collapse" id="collapse3">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-        </ul>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse4" href="#collapse4">{{ "menu.subida_datos" | translate }} <i class="fa fa-caret-down" aria-hidden="true"></i> <i class="fa fa-caret-up" aria-hidden="true"></i> </a>
-        <ul class="nav flex-column collapse" id="collapse4">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-        </ul>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse5" href="#collapse5">{{ "menu.dashboard" | translate }} <i class="fa fa-caret-down" aria-hidden="true"></i> <i class="fa fa-caret-up" aria-hidden="true"></i> </a>
-        <ul class="nav flex-column collapse" id="collapse5">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-        </ul>
-    </li>-->
+
+    <ng-container *ngIf="!menuCargado">
+        <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
+        <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
+        <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
+        <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
+        <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
+        <p-skeleton width="100%" styleClass="p-mb-2"></p-skeleton>
+    </ng-container>
+
 </ul>
-
-
-<!--
-
-<ul class="nav">
-    <li class="nav-item">
-        <a class="nav-link active" href="#"> {{ "MENU.NOSOTROS" | translate | uppercase  }} </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">{{ "MENU.PRODUCTOS" | translate | uppercase  }}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">{{ "MENU.CONTACTANOS" | translate | uppercase  }}</a>
-    </li>
-    <li class="nav-item">
-        <mat-form-field>
-            <mat-label>Idioma</mat-label>
-            <mat-select (selectionChange)="onChangeIdioma(idioma.value)" #idioma>
-                <mat-option *ngFor="let idioma of idiomas" [value]="idioma">
-                    idioma
-                </mat-option>
-
-            </mat-select>
-        </mat-form-field>
-
-    </li>
-</ul>    
--->

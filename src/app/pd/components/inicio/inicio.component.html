@@ -1,7 +1,31 @@
-<div class="pt-4">
+<div>
+    <div class="row encabezado">
+        <div class="col-12 col-xl-4 col-lg-4 col-md-4 ">
+            <img class="img-fluid" src="./assets/images/logos-cenpromype-b-n-06-1024x262-n.png">
+        </div>
+        <div class="col-12 col-xl-5 col-lg-5 col-md-4 p-as-center">
+            <div class="w-100 p-text-center">
+                <h3 class="text-white" [innerHTML]="'titulo' | translate | sanitizerHTML"></h3>
+            </div>
+        </div>
+        <div class="col-12 col-xl-2 col-lg-3 col-md-4 p-ml-auto">
+            <div class="row align-items-center h-100">
+                <div class="col-auto">
+                    <div class="form-group">
+                        <p-dropdown [options]="[ { id: 'es', desc: 'Español'  }, { id: 'en', desc: 'English'  } ]" optionValue="id" optionLabel="desc" (onChange)="onChangeIdioma(idioma.value)" [(ngModel)]="idiomaSeleccionado" #idioma>
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <p-splitButton [label]="localStorage.getCurrentUsername()" icon="pi pi-user" [model]="items" styleClass="p-button-primary"></p-splitButton>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--
     <div class="row">
         <div class="col-8">
-            <!--<img src="./assets/images/logos.png" class="img-fluid w-100" alt="">-->
+
             <p-carousel [value]="[ '07.png', '08.png', '09.png' ]" [numVisible]="1" [numScroll]="1" [showNavigators]="false" [showIndicators]="false" [autoplayInterval]="2000" [circular]="false">
                 <ng-template let-item pTemplate="item">
                     <div class="w-100 h-100">
@@ -12,49 +36,33 @@
 
                     </div>
 
-                    <!--<div class="position-relative w-100" style="background-color: #12539d; width: fit-content;">
-                        <div class="w-100 h-100" style="background-image: url('');
-                        background-size: cover;background-repeat: no-repeat;opacity: 0.35;">
-                        </div>
-                    </div>-->
+
                 </ng-template>
             </p-carousel>
         </div>
-        <!--<div class="col-6">
-            <div class="row">
-                <div class="col-12 text-md-center">
-                    <h1> {{ "titulo" | translate | uppercase }} </h1>
-                </div>
 
-            </div>
-        </div>-->
         <div class="col-4">
             <div class="row ">
                 <div class="col-auto">
                     <div class="form-group">
-                        <select (change)="onChangeIdioma(idioma.value)" #idioma class="form-control" style="appearance: auto !important;">
-                                <option value="es">Español</option>
-                                <option value="en">English</option>
-                                <option value="de">Deutsch</option>
-                                <option value="fr">Français</option>
-                              </select>
+                        <p-dropdown [options]="[ { id: 'es', desc: 'Español'  }, { id: 'en', desc: 'English'  } ]" optionValue="id" optionLabel="desc" (onChange)="onChangeIdioma(idioma.value)" [(ngModel)]="idiomaSeleccionado" #idioma>
+                        </p-dropdown>
                     </div>
                 </div>
                 <div class="col-auto">
-                    <button class="btn btn-primary" (click)="cerrarSesion()" role="button" id="idiomas" aria-expanded="false"> {{ "botones.cerrar_sesion" | translate }}</button>
-
+                    <p-splitButton [label]="localStorage.getCurrentUsername()" icon="pi pi-user" [model]="items" styleClass="p-button-primary"></p-splitButton>
                 </div>
             </div>
         </div>
 
-    </div>
+</div>-->
 
 
 
 </div>
-<div class="w-100">
+<div class="w-100 d-none">
     <div class="p-2" style="box-shadow: 0 0 3px rgb(48, 48, 48);">
-        <h2 class="m-0">{{ "administrador" | translate}}</h2>
+        <h3 class="m-0">{{ "administrador" | translate}}</h3>
     </div>
 </div>
 <div>
@@ -74,7 +82,10 @@
                         <button type="button" pButton icon="pi pi-cancel" label="{{ 'mensajes.cuadroDialogo.no' | translate }}" (click)="cd.reject()"></button>
                     </ng-template>
                 </p-confirmDialog>
-                <router-outlet></router-outlet>
+                <div id="tabla-datos">
+                    <router-outlet></router-outlet>
+                </div>
+
             </section>
         </div>
     </div>

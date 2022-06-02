@@ -13,6 +13,7 @@ import {ProductosComponent} from "./components/tb/productos/productos.component"
 import {DocumentosServicioComponent} from "./components/tb/documentos-servicio/documentos-servicio.component";
 import {DocumentosComponent} from "./components/tb/documentos/documentos.component";
 import { MenuComponent } from './components/inicio/menu/menu.component';
+import { PortalComponent } from './components/portal/portal.component';
 
 
 
@@ -31,7 +32,8 @@ const routes: Routes = [
       { path: 'tb/documentos', component: DocumentosComponent },
       { path: 'traductor', component: TraductorComponent },
       { path: 'tb/documento-servicio', component: DocumentosServicioComponent },
-      { path: 'tb/menu', component: MenuComponent }
+      { path: 'tb/menu', component: MenuComponent },
+      { path: 'portal/usuarios', component: PortalComponent }
     ]
   }
  ,
