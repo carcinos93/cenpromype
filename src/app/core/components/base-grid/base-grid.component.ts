@@ -22,6 +22,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   @Output() OnEdit = new EventEmitter();
   @Output() OnNew = new EventEmitter();
   @Output() OnLoadData = new EventEmitter();
+  @Output() OnDblClick = new EventEmitter();
   @Input() isDetail: boolean = false;
   @Input() bodyTemplate: TemplateRef<HTMLElement> = null as any;
   @Input() titulo: string = '';
@@ -135,8 +136,11 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   }
 
 
+  /**
+   * TODO Verificar filtros
+   */
   get hayFiltrosAplicados() {
-    return this.filtrosAplicados != {};
+    return false;
   }
   private lastTableLazyLoadEvent: LazyLoadEvent;
   private lastTableFilters: any =   {};
@@ -234,13 +238,12 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
           res.data = d;
           return res;
       } )  ).subscribe((res: any) => {
-       // let arr = data.slice( event.first , (event.first??0) + (event.rows??0 ));;
+
 
       this.datos = res.data || [];
       this.totalRecord = res.total;
       this.cargando = false;
-        /*this.datos = data;
-        this.totalRecord = data.length;*/
+
      }, (error) => {   
        this.snack.open("Fallo al recuperar datos","", { verticalPosition: "bottom", duration: 4000, panelClass: ['mat-toolbar', 'bg-warning', 'text-light'] });
        this.cargando = false;
@@ -271,11 +274,9 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       this.crudService.get( data[this._config.primaryKey.column], recuperarRoute ).subscribe((data) => {
             this.datoSeleccionado = data;
             accion();
-          
       }, (err) => {
-        console.log(err);
+          console.log(err);
       });
-
     } else {
         accion();
     }
@@ -318,7 +319,9 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+  onDblClick(data: any) {
+    this.OnDblClick.emit(data);
+  }
 
   idRandom() {
      return (Math.random() * 65815 + Math.random() + 2697257 + (new Date().getMilliseconds())).toFixed(0);
@@ -432,9 +435,7 @@ estadoOriginal() {
                control.markAsPristine();
             }
         }
-
-  
-}
+  }
 }
 
 validarFormularios() {

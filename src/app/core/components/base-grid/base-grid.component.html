@@ -77,7 +77,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-dato>
-        <tr>
+        <tr (dblclick)="onDblClick(dato)">
             <td *ngIf="allowSelection">
                 <ng-container *ngTemplateOutlet="selectionMode == 'single' ? single : multi"></ng-container>
                 <ng-template #single>
