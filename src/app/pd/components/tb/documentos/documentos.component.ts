@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { CheckBoxForm, DetailForm, DropdownForm, EditorForm, TextboxForm, FileForm } from '../../../models/form.model';
+import { CheckBoxForm, DetailForm, DropdownForm, EditorForm, TextboxForm, FileForm, CalendarForm } from '../../../models/form.model';
 import { CRUDServiceService } from '../../../../core/services/crudservice.service';
 
 @Component({
@@ -107,22 +107,26 @@ export class DocumentosComponent implements OnInit, AfterViewInit {
   iframeCarga() {
     console.log("cargando");
      this.frameCargando = false;
+     //      recuperarRoute: 'TB/documento',
   }
   encabezado() {
     return {
       insertRoute: 'TB/documento',
       updateRoute: 'TB/documento',
       dataRoute: 'TB/documento',
-      recuperarRoute: 'TB/documento',
       selectedMode: "single",
       allowSelection: true,
       commands: [ { name: 'pdf', event: this.pdfCommando.bind(this) } ],
       primaryKey: { column: 'CODIGO_DOCUMENTO', key: 'codigo_documento' },
-      botonesEstado: { 'borrar': false },
+      botonesEstado: { 'borrar': false, 'pdf': false },
       multi: true,
       dataTable: {
+        casts: {'FECHA_ACTUALIZACION' : 'date'},
         columns: [
           { 'columna': 'NOMBRE_PRODUCTO', 'nombre': 'tb.documento.producto', filter: { type: 'dropdown', dataSource: 'listas/productos', field: 'TB_DOCUMENTOS.CODIGO_PRODUCTO' } },
+          { 'columna': 'NOMBRE_DOCUMENTO', 'nombre': 'tb.documento.nombre' },
+          { 'columna': 'VOLUMEN', 'nombre': 'tb.documento.volumen' },
+          { 'columna': 'FECHA_ACTUALIZACION', 'nombre': 'tb.documento.fecha_actualizacion','pipes': [{ 'pipe' : 'date', 'parametros': ["MMMM/yy"] }] },
           { 'columna': 'DESCRIPCION_DOCUMENTO', 'nombre': 'tb.documento.descripcion' },
           { 'columna': 'ESTATUS', 'nombre': 'tb.documento.estatus' },
           { 'columna': 'ACCESO', 'nombre': 'tb.documento.acceso', labelValues: { "00": "no paga", "05": "nivel 1", "10": "nivel 2" } }
@@ -131,6 +135,9 @@ export class DocumentosComponent implements OnInit, AfterViewInit {
       controls: [{
         titulo: "General", controls: [
           new DropdownForm({ objectKey: 'CODIGO_PRODUCTO', key: "codigo_producto", label: "tb.documento.producto", required: true, order: 1 }, { dataSource: 'listas/productos' }),
+          new TextboxForm({ objectKey: 'NOMBRE_DOCUMENTO', key: "nombre", label: "tb.documento.nombre", required: true, order: 4 }),
+          new TextboxForm({ objectKey: 'VOLUMEN', key: "volumen", label: "tb.documento.volumen", required: true, order: 4 }),
+          new CalendarForm({ objectKey: 'FECHA_ACTUALIZACION', key: "fecha_actualizacion", label: "tb.documento.fecha_actualizacion", required: true, order: 4 }, { view: "month", format: "MM/yy" }),
           new TextboxForm({ objectKey: 'DESCRIPCION_DOCUMENTO', key: "descripcion", label: "tb.documento.descripcion", required: true, order: 4 }, { isTextArea: true }),
           new CheckBoxForm({ objectKey: 'ESTATUS', key: "estatus", label: "tb.documento.estatus", required: true, order: 1 }, { trueValue: "ACTIVO", falseValue: "INACTIVO" }),
           new FileForm({ objectKey: 'IMAGEN', key: "imagen", label: "tb.documento.imagen", required: false, order: 1 }, { accept: "image/*" }),

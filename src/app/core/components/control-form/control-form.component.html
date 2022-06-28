@@ -12,6 +12,9 @@
         <p-inputNumber inputStyleClass="w-100" [(ngModel)]="datoSeleccionado[control.objectKey]" [minFractionDigits]="control?.minFractionDigits" inputId="locale-user" [formControlName]="control.key" [id]="control.key" [minFractionDigits]="2">
         </p-inputNumber>
     </ng-container>
+    <ng-container *ngSwitchCase="'calendar'">
+        <p-calendar [view]="control.view" [dateFormat]="control.format" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key"></p-calendar>
+    </ng-container>
     <ng-container *ngSwitchCase="'password'">
         <input pPassword [showPassword]="true" (change)="control.onchange($event.target)" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" [id]="control.key" type="password">
     </ng-container>
@@ -54,6 +57,7 @@
         <!--<input type="hidden" [(ngModel)]="datoSeleccionado[control.objectKey]" [formControlName]="control.key" />-->
         <app-file-uploader [formControlName]="control.key" [(ngModel)]="datoSeleccionado[control.objectKey]" [multiple]="control.multiple" [accept]="control.accept"></app-file-uploader>
     </ng-container>
+    
     <ng-container *ngSwitchCase="'editor'">
         <div class="image-upload">
             <label [for]="control.key + '_key'">

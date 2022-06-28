@@ -58,6 +58,19 @@ export class HiddenForm extends inputBase<string> {
   }
 }
 
+export class CalendarForm extends inputBase<string> {
+  controlType = 'calendar';
+  view: string;
+  format: string;
+
+  constructor(options: any, o: { view?: string, format?: string } = {})
+  {
+    super(options);
+    this.format = o.format || "dd/MM/yyyy";
+    this.view = o.view || "date";
+  }
+}
+
 export class TextNumberForm extends inputBase<string> {
   controlType = 'number';
   minFractionDigits: number;
@@ -172,6 +185,7 @@ export interface configFormBuild {
   recuperarRoute: string,
   dataTable: {
     columns: any[];
+    casts: any
   },
   botonesEstado: any;
   //columnas: string[];

@@ -33,7 +33,7 @@ export class CRUDServiceService {
   getAll(route: string, l: any): Observable<any> {
     let filterArray= [];
     let sort = l.multiSortMeta ?? [];
-    if (l.cfilter != null && l.cfilter != {}){
+    if (l.cfilter != null){
       for (let v in l.cfilter) {
           filterArray.push( l.cfilter[v] );
       }

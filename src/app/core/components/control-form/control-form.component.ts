@@ -110,7 +110,9 @@ export class ControlFormComponent implements OnInit {
         }*/
       }
   }
-
+  onclose(event: any) {
+    console.log(this.datoSeleccionado);
+  }
   generacionValidaciones(validators: any[]) {
     let validatorArr = [];
     for (let v in validators) {

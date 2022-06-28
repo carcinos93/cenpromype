@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalStorageService } from '../../../core/services/local-storage.service';
-
+import { PrimeNGConfig } from 'primeng/api';
 @Component({
   selector: 'app-inicio',
   templateUrl: './inicio.component.html',
@@ -15,10 +15,13 @@ export class InicioComponent implements OnInit {
   items: any[] = [];
   idiomaSeleccionado: string = 'es';
   constructor( private translateService: TranslateService, private snack: MatSnackBar, public localStorage: LocalStorageService,
-    private router: Router) {
+    private router: Router,
+    private config: PrimeNGConfig) {
       let idioma = this.localStorage.getItem("cenpromype_idioma") || "es";
       this.idiomaSeleccionado = idioma;
       this.translateService.use(idioma);
+
+      this.translateService.get('primeng').subscribe((res) => this.config.setTranslation(res));
       
   }
   ngOnInit(): void {

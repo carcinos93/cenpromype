@@ -10,6 +10,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {PipeManagerService} from "../../services/pipe-manager.service";
 import {ConfirmationService} from 'primeng/api';
 import {TranslateService} from "@ngx-translate/core";
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-base-grid',
@@ -27,7 +28,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   @Input() bodyTemplate: TemplateRef<HTMLElement> = null as any;
   @Input() titulo: string = '';
   
-  _config :  configFormBuild = { selectionMode:  "single", allowSelection: false,multi: false ,dataTable: { columns: [] }, controls: [], commands: [], primaryKey: { column: '', key: ''  }, botonesEstado: {}} as any;
+  _config :  configFormBuild = { selectionMode:  "single", allowSelection: false,multi: false ,dataTable: { columns: [], casts: {} }, controls: [], commands: [], primaryKey: { column: '', key: ''  }, botonesEstado: {}} as any;
   selectionMode:  "single" | "multi" = "single";
   allowSelection: boolean = false;
   selectedRows: any = null;
@@ -67,6 +68,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
         v.event.bind(this);
       });
       this.columnas = this._config.dataTable.columns || [];
+      this.casts = this._config.dataTable.casts || {};
       this.filtros = this._config.filters || [];
       this.columnas.forEach((v, i) => {
         if (v.filter != null ) {
@@ -85,6 +87,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
   commandos: command[] = [];
   filtros: any = [];
   columnas: any[] = [];
+  casts: any =  {};
   _keyValue: any = {};
   @Input() set keyValue(o: any) {
       if (o.value != null) {
@@ -229,6 +232,14 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
       this.crudService.getAll(dataRoute, event).pipe( map( (res: any) => {
           let d = res.data || [];
           d.forEach( (v:any, i: number) => {
+              //conversiones
+              for (let key in this.casts) {
+                  if (this.casts[key] == "date") {
+                     if (d[i][key]) {
+                      d[i][key] = new Date( d[i][key] );
+                     }
+                  }
+              }
               this.columnas.forEach((c: any ) => {
                   if (c.pipes != null) {
                       d[i][c.columna + '_formated'] = this.transformarDato( d[i][c.columna], c.pipes );
@@ -236,11 +247,12 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
               });
           } );
           res.data = d;
+
           return res;
       } )  ).subscribe((res: any) => {
 
-
       this.datos = res.data || [];
+      console.log(this.datos);
       this.totalRecord = res.total;
       this.cargando = false;
 
@@ -255,6 +267,7 @@ export class BaseGridComponent implements OnInit, AfterViewInit {
 
 
    editar(data: any): void {
+    console.log(this.datoSeleccionado);
     this.cargandoFormulario = true;
     const __id = this.idRandom();
     this.datoSeleccionado = {...data, __id : __id};
@@ -398,7 +411,13 @@ datosFormularios(nuevoRegistro: Boolean) {
         (Object.entries(r.controls) as [ [ key: string, control: FormControl ] ])
         .filter((v) => v[1].dirty || nuevoRegistro || this.isDetail ) /*** para evitar problemas con los registros nuevos */
         .forEach((v ) => { 
-          values[ v[0] ] = v[1].value;
+          if ( v[1].value instanceof Date ) {
+            values[ v[0] ] = formatDate(v[1].value, "y-MM-dd", "en_US" );
+          
+          } else {
+             values[ v[0] ] = v[1].value;
+          }
+         
         } );
         
         /*.map((v, i) => { 
@@ -479,6 +498,7 @@ validarFormularios() {
 
      /**TODO */
      for ( let i in datoFormulario ) {
+
        formData.append( i, datoFormulario[i] );
      }
 
